@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="SqliteTest.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="hello1.db" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\FS2020Control\ControlContext.cs" Link="ControlContext.cs" />
+    <Compile Include="..\FS2020Control\FSControl.cs" Link="FSControl.cs" />
+    <Compile Include="..\FS2020Control\XmlToSqlite.cs" Link="XmlToSqlite.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" Version="0.100.3" />
+    <PackageReference Include="itext7" Version="7.2.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.4" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
+    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+  </ItemGroup>
+
+</Project>

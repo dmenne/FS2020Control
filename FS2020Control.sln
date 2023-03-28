@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33417.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FS2020Control", "FS2020Control\FS2020Control.csproj", "{729D9AC0-9589-4EF0-84EE-EA788E6DB4E2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FS2020ControlTest", "FS2020ControlTest\FS2020ControlTest.csproj", "{DDB7EDDD-1598-4E09-B366-ECCAAD5B44B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{729D9AC0-9589-4EF0-84EE-EA788E6DB4E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{729D9AC0-9589-4EF0-84EE-EA788E6DB4E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{729D9AC0-9589-4EF0-84EE-EA788E6DB4E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{729D9AC0-9589-4EF0-84EE-EA788E6DB4E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDB7EDDD-1598-4E09-B366-ECCAAD5B44B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDB7EDDD-1598-4E09-B366-ECCAAD5B44B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDB7EDDD-1598-4E09-B366-ECCAAD5B44B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDB7EDDD-1598-4E09-B366-ECCAAD5B44B6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D0838BEB-B44F-44CD-B1CF-3624D0F71841}
+	EndGlobalSection
+EndGlobal
