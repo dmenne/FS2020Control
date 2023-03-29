@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FS2020ControlTest", "FS2020
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C01137FA-C947-4096-A17A-B5A65917CBD8}"
 	ProjectSection(SolutionItems) = preProject
+		png\FS2020App.png = png\FS2020App.png
+		png\FS2020DoubleClick.png = png\FS2020DoubleClick.png
+		png\FS2020Excel.png = png\FS2020Excel.png
+		png\FS2020SQLite.png = png\FS2020SQLite.png
 		README.md = README.md
 	EndProjectSection
 EndProject
