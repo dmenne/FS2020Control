@@ -4,14 +4,19 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <Nullable>enable</Nullable>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <DebugType>embedded</DebugType>
     <UseWPF>true</UseWPF>
     <Company>MenneBiomed</Company>
     <Title>Microsoft Flight Simulator 2020 Control Assignments</Title>
-    <Authors>MenneBiomed Consulting</Authors>
-    <Copyright>MenneBiomed 2023</Copyright>
+    <Authors>Dieter Menne</Authors>
+    <Copyright>MenneBiomed Consulting 2023</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>FS2020;Controls;Mouse;Keyboard;Flight Stick</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>fs2020.png</PackageIcon>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -40,6 +45,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="fs2020.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
