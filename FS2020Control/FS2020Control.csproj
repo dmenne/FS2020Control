@@ -6,6 +6,12 @@
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
     <Company>MenneBiomed</Company>
+    <Title>Microsoft Flight Simulator 2020 Control Assignments</Title>
+    <Authors>MenneBiomed Consulting</Authors>
+    <Copyright>MenneBiomed 2023</Copyright>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>FS2020;Controls;Mouse;Keyboard;Flight Stick</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -37,6 +43,10 @@
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
