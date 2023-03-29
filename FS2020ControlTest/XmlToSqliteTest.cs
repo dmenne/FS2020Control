@@ -8,11 +8,11 @@ namespace FS2020ControlTest
   public class XmlToSqliteTest
   {
 
-    private bool NoFS {
-      // Cannot run tests on Github actions
+    private static bool NoFS {
+      // Cannot run tests on github actions
       get {
         var xh = new XmlToSqlite();
-        return  Directory.Exists(xh.FS2020RootDir);
+        return  !Directory.Exists(xh.FS2020RootDir);
     } }
 
 
