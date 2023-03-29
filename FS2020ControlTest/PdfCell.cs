@@ -1,7 +1,7 @@
 ﻿//Imports
 using iText.Layout.Element;
 
-namespace FS2020Control
+namespace FS2020ControlTest
 {
   internal class PdfCell
   {

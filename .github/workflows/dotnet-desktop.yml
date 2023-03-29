@@ -1,7 +1,4 @@
 # This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
 
 # This workflow will build, test, sign and package a WPF or Windows Forms desktop application
 # built on .NET Core.
@@ -61,9 +58,9 @@ jobs:
       # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Test_Project_Path: FS2020ControlTest/FS2020ControlTest.csproj
       # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
-      Wap_Project_Directory: your-wap-project-directory-name
+      Wap_Project_Directory: FS2020ControlWap
       # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
-      Wap_Project_Path: your-wap-project-path
+      Wap_Project_Path: FS2020Control\FS2020ControlWap.wapproj
 
     steps:
     - name: Checkout
