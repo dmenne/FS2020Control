@@ -7,9 +7,19 @@ namespace FS2020ControlTest
   [TestClass]
   public class XmlToSqliteTest
   {
+
+    private bool NoFS {
+      // Cannot run tests on Github actions
+      get {
+        var xh = new XmlToSqlite();
+        return  Directory.Exists(xh.FS2020RootDir);
+    } }
+
+
     [TestMethod]
     public void PathToFSMustExist()
     {
+      if (NoFS) return;
       var xh = new XmlToSqlite();
       Assert.IsTrue(Directory.Exists(xh.FS2020RootDir));
       Assert.IsTrue(Directory.Exists(xh.FS2020ContainerDir));
@@ -18,6 +28,7 @@ namespace FS2020ControlTest
     [TestMethod]
     public void ImportedFilesMustBeXML()
     {
+      if (NoFS) return;
       // No database
       var xh = new XmlToSqlite();
       xh.ImportXmlFiles();
@@ -27,6 +38,7 @@ namespace FS2020ControlTest
     [TestMethod]
     public void ImportXmlWithoutDataContext()
     {
+      if (NoFS) return;
       var xh = new XmlToSqlite();
       var s = new StringWriter();
       Console.SetOut(s);
@@ -37,6 +49,7 @@ namespace FS2020ControlTest
     [TestMethod]
     public void UseDatabaseWhenDataAreAvailable()
     {
+      if (NoFS) return;
       using (var ct = new ControlContext(test: true))
       {
         Assert.IsNotNull(ct);

@@ -57,6 +57,8 @@ jobs:
       Solution_Name: FS2020Control.sln       
       # Replace with the path to your test project, i.e. MyWpfApp.Tests\MyWpfApp.Tests.csproj.
       Test_Project_Path: FS2020ControlTest/FS2020ControlTest.csproj
+      # Maybe not needed
+      Wpf_Project_Path: FS2020Control/FS2020Contol.csproj
       # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       Wap_Project_Directory: FS2020ControlWap
       # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.

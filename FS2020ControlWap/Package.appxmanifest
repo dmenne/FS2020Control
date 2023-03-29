@@ -8,11 +8,11 @@
 
   <Identity
     Name="c1451ca8-6b2b-433e-bd3c-8834df69ef61"
-    Publisher="CN=Dieter"
+    Publisher="CN=Dieter Menne - Menne Biomed Consulting"
     Version="1.0.0.0" />
 
   <Properties>
-    <DisplayName>FS2020ControlWap</DisplayName>
+    <DisplayName>FS2020 Control</DisplayName>
     <PublisherDisplayName>Dieter</PublisherDisplayName>
     <Logo>Images\StoreLogo.png</Logo>
   </Properties>
