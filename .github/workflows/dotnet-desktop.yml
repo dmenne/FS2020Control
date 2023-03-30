@@ -62,7 +62,7 @@ jobs:
       # Replace with the Wap project directory relative to the solution, i.e. MyWpfApp.Package.
       Wap_Project_Directory: FS2020ControlWap
       # Replace with the path to your Wap project, i.e. MyWpf.App.Package\MyWpfApp.Package.wapproj.
-      Wap_Project_Path: FS2020Control\FS2020ControlWap.wapproj
+      Wap_Project_Path: FS2020ControlWap\FS2020ControlWap.wapproj
 
     steps:
     - name: Checkout
