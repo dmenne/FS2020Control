@@ -14,7 +14,7 @@
     <Authors>Dieter Menne</Authors>
     <Copyright>MenneBiomed Consulting 2023</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>FS2020;Controls;Mouse;Keyboard;Flight Stick</PackageTags>
+    <PackageTags>FS2020;Controls;Mouse;Keyboard;Flight Stick;Flight Simulator</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageIcon>fs2020.png</PackageIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
@@ -22,10 +22,12 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>7</WarningLevel>
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>7</WarningLevel>
+    <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

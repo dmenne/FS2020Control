@@ -55,8 +55,9 @@
     <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
     <DefaultLanguage>en-US</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <NoWarn>$(NoWarn);NU1702</NoWarn>
+    <NoWarn>$(NoWarn);NU1702;NU1701</NoWarn>
     <EntryPointProjectUniqueName>..\FS2020Control\FS2020Control.csproj</EntryPointProjectUniqueName>
+    <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     <PackageCertificateThumbprint>A68224F334781E365428458D2884FA374F68AE52</PackageCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>

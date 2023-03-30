@@ -7,7 +7,12 @@
 
     <IsPackable>false</IsPackable>
 
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);TEST</DefineConstants>
+    <NoWarn>NU1701;NU1702</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
