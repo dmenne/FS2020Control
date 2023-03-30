@@ -57,8 +57,7 @@
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <NoWarn>$(NoWarn);NU1702</NoWarn>
     <EntryPointProjectUniqueName>..\FS2020Control\FS2020Control.csproj</EntryPointProjectUniqueName>
-    <PackageCertificateThumbprint>226CBD101F1E4A3B3DD4492CFDAAECCEF6461396</PackageCertificateThumbprint>
-    <PackageCertificateKeyFile>FS2020ControlWap_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateThumbprint>A68224F334781E365428458D2884FA374F68AE52</PackageCertificateThumbprint>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -66,7 +65,7 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FS2020ControlWap_TemporaryKey.pfx" />
+    <None Include="FS2020ControlWap.pfx" />
     <Content Include="Images\SplashScreen.scale-200.png" />
     <Content Include="Images\LockScreenLogo.scale-200.png" />
     <Content Include="Images\Square150x150Logo.scale-200.png" />
