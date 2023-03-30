@@ -18,8 +18,9 @@
 # by running the following Powershell script to generate the output string:
 #
 # In FS2020ControlWap/
-# $pfx_cert = Get-Content '.\MenneBiomed2022.pfx' -Encoding Byte 
-# [System.Convert]::ToBase64String($pfx_cert) | Out-File 'MenneBiomed2022_Encoded.txt'
+
+# $pfx_cert = Get-Content '.\MenneBiomedFS2020Control.pfx' -Encoding Byte 
+# [System.Convert]::ToBase64String($pfx_cert) | Out-File 'MenneBiomedFS2020Control_Encoded.txt'
 #
 #
 # Open the output file, SigningCertificate_Encoded.txt, and copy the
