@@ -11,11 +11,7 @@ $projDir = "./FS2020Control"
 Set-StrictMode -version 2.0
 $ErrorActionPreference = "Stop"
 
-function Get-ScriptDirectory {
-    Split-Path -Parent $PSCommandPath
-}
-
-Set-Location -Path  $PSScriptRoot
+#Set-Location -Path  $PSScriptRoot
 
 Write-Output "Working directory: $pwd"
 
