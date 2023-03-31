@@ -27,9 +27,11 @@ Write-Output "MSBuild: $((Get-Command $msBuildPath).Path)"
 
 # Load current Git tag.
 $tag = $(git describe --tags)
-# Tag must be a valid version of the form 1.0.0.0
-Write-Output "Tag: $tag"
-$version = $tag
+# Tag must be a valid version of the form v1.0.0
+# Parse tag into a three-number version.
+$version = $tag.Split('-')[0].TrimStart('v')
+$version = "$version.0"
+Write-Output "Version: $version"
 
 # Clean output directory.
 $publishDir = "bin/publish"
