@@ -1,6 +1,10 @@
 # FS2020Control: Export Control Settings in Microsoft FS2020 to SQLite, Excel and Pdf
 
+[![stability-alpha](https://img.shields.io/badge/stability-alpha-f4d03f.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#alpha)
+
 [dieter.menne\@menne-biomed.de](mailto:dieter.menne@menne-biomed.de)
+
+**Working code, install files work in progress**
 
 Getting an overview of the assigned keys for keyboard, mouse, flight stick in Microsoft 
 Flight Simulator 2020 is not easy. The local copies of the control settings are stored 
