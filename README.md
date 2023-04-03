@@ -14,14 +14,15 @@ in a file with path like:
     Microsoft.FlightSimulator_8wekyb3d8bbwe\
     SystemAppData\wgs\
     000901F9BE5269E8_00000000000000000000000069F80140\
-    9D40C7EC95724C16A62F4153D13B14B9\C6A6EACA3129423E8E4E42B33DE3BFCF
+    9D40C7EC95724C16A62F4153D13B14B9\
+    C6A6EACA3129423E8E4E42B33DE3BFCF
 
 *the above is ONE LINE*. 
 
 Whenever changes are made in the control settings, the device's settings file is deleted and 
 replaced by another file with cryptic name.
 
-In short: Microsoft does not want that you mess with it, and may change everything without notice.
+In short: Microsoft does not want us to mess with it, and may change everything without notice.
 
 
 ## What the app does
@@ -49,16 +50,28 @@ with names such as `FS2020Controls_Mouse_A300.pdf`. The directory is created whe
 ![Pdf Summary of selected controls. Re-build of this report fails when a 
 previous version is open in a reader.](png/FS2020Pdf.png)
 
+Example file name:
+
+`C:\Users\<Username>\Documents\FS2020Keys\FS2020Controls_Mouse_A300.pdf`
+
 ### Excel
 
 ![Excel table of selected controls. Re-build of the workbook fails when a 
 previous version is open in Excel.](png/FS2020Excel.png)
+
+Example file name: 
+
+`C:\Users\<Username>\Documents\FS2020Keys\FS2020Controls_Keyboard_A310.xlsx`
 
 ### Database
 
 ![SQLite database for advanced users. The database is recreated on explicit 
 reload request, but not on restart of the program. It contains settings for all 
 control items, independent of the selection in the left grids.](png/FS2020SQLite.png)
+
+Example file name: 
+
+`C:\Users\<Username>\Documents\FS2020Keys\FS2020.sqlite`
 
 ## Advanced 
 
