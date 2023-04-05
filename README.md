@@ -1,6 +1,6 @@
 # FS2020Control: Export Control Settings in Microsoft FS2020 to SQLite, Excel and Pdf
 
-[![stability-alpha](https://img.shields.io/badge/stability-alpha-f4d03f.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#alpha)
+[![stability-release-candidate](https://img.shields.io/badge/stability-pre--release-48c9b0.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#release-candidate)
 
 [dieter.menne\@menne-biomed.de](mailto:dieter.menne@menne-biomed.de)
 
@@ -25,7 +25,13 @@ In short: Microsoft does not want us to mess with it, and may change everything 
 
 ## Installation
 
-- Download zip
+Releases are on [flightsim.to](https://flightsim.to/d/dmenne/fs2020-control).
+
+- Unzip SetupFS2020Control.zip into a temporary directory
+- Double-click `setup.exe`
+- You can delete all temporary files after installation
+
+
 ## What the app does
 
 -   Tries to find the settings files of the controls and scans all - I am not sure if this will work in all installations;
