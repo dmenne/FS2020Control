@@ -7,7 +7,7 @@
 
 Getting an overview of the assigned keys for keyboard, mouse, flight stick in Microsoft 
 Flight Simulator 2020 is not easy. The local copies of the control settings are stored 
-in a file with path like:
+in a file with a path like:
 
     C:\Users\MyName\AppData\Local\Packages\
     Microsoft.FlightSimulator_8wekyb3d8bbwe\
