@@ -25,15 +25,14 @@ In short: Microsoft does not want us to mess with it, and may change everything 
 
 ## Installation
 
-- Download 
-
+- Download zip
 ## What the app does
 
 -   Tries to find the settings files of the controls and scans all - I am not sure if this will work in all installations;
 -   Writes all settings into an SQLite Database, which can be used by advanced users to generate custom reports;
 -   Displays all control settings, allows for a subset selection and sort order for reporting;
--   Generates a PDF Reference sheet;
--   Generates a Excel File with sortable and selectable entries in an Excel table.
+-   Generates a PDF reference sheet;
+-   Generates an Excel file with sortable and selectable entries.
 
 Database, Excel and PDF file are stored in directory `Documents/FS2020Key` 
 with names such as `FS2020Controls_Mouse_A300.pdf`. The directory is created when it does not exist.
