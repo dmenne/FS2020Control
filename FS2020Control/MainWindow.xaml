@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="FS2020 Controls" Height="800" Loaded="Window_Loaded"
         MaxHeight="1000"
-        SizeToContent ="Width" Closing="Window_Closing">
+        SizeToContent ="Width" Closing="Window_Closing" Icon="/fs2020.png">
   <Window.Resources>
     <Style TargetType="Label">
       <Setter Property="Background" Value="#FFF2FBFA"></Setter>

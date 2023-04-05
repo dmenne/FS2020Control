@@ -4,7 +4,6 @@
 
 [dieter.menne\@menne-biomed.de](mailto:dieter.menne@menne-biomed.de)
 
-**Working code, install files work in progress**
 
 Getting an overview of the assigned keys for keyboard, mouse, flight stick in Microsoft 
 Flight Simulator 2020 is not easy. The local copies of the control settings are stored 
@@ -24,6 +23,9 @@ replaced by another file with cryptic name.
 
 In short: Microsoft does not want us to mess with it, and may change everything without notice.
 
+## Installation
+
+- Download 
 
 ## What the app does
 

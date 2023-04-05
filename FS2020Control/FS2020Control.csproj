@@ -19,6 +19,9 @@
     <PackageIcon>fs2020.png</PackageIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PlatformTarget>AnyCPU</PlatformTarget>
+    <AssemblyVersion>1.0.0.1</AssemblyVersion>
+    <FileVersion>1.0.0.1</FileVersion>
+    <ApplicationIcon>fs2020.ico</ApplicationIcon>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
@@ -32,7 +35,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="fs2020.png" />
     <None Remove="release.ps1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="fs2020.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +53,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="fs2020.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <AutoGen>True</AutoGen>
@@ -53,10 +68,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="fs2020.png">
-      <Pack>True</Pack>
-      <PackagePath>\</PackagePath>
-    </None>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
