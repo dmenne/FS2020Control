@@ -36,6 +36,9 @@ namespace FS2020Control
       var tracker = Services.Tracker;
       tracker.Track(this);
       tracker.Track(HideDebugCheck);
+      var assembly = System.Reflection.Assembly.GetExecutingAssembly()?
+        .GetName()?.Version?.ToString();
+      Title = "FS2020 Controls - " + assembly;
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
