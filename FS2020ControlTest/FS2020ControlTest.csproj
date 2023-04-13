@@ -30,6 +30,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Castle.Core" Version="5.1.1" />
     <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="itext7" Version="7.2.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
@@ -37,6 +38,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
     <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
 
 </Project>
