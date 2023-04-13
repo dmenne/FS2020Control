@@ -100,8 +100,8 @@ namespace FS2020Control
         );
       }
       using var wb = new XLWorkbook();
-      string fName = friendlyName.Substring(0, Math.Min(10,friendlyName.Length));
-      string dName = device.Substring(0, 30-fName.Length);
+      string fName = friendlyName[..Math.Min(10, friendlyName.Length)];
+      string dName = device[..Math.Min(30 - fName.Length, device.Length)];
       var ws = wb.AddWorksheet($"{dName}-{fName}");
       ws.FirstCell().InsertTable(dt);
       ws.Columns("A:I").AdjustToContents();

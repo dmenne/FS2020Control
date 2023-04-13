@@ -8,8 +8,9 @@ using System.ComponentModel;
 using System.Windows.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using System.CodeDom;
 
-// When the designer complaints or crashes, delete the bin folder and refresh
+
 // https://learn.microsoft.com/en-us/ef/core/get-started/wpf
 
 namespace FS2020Control
@@ -43,7 +44,15 @@ namespace FS2020Control
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-      LoadData();
+      try
+      {
+        LoadData();
+      }
+      catch (System.Exception ex)
+      {
+        MessageBox.Show(ex.Message, "Flight Simulator 2020 Controls",
+          MessageBoxButton.OK, MessageBoxImage.Error);
+      }
     }
     
     private void LoadData() { 

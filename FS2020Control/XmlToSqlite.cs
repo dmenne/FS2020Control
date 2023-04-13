@@ -9,6 +9,10 @@ using System.Text.Json;
 using System.Data;
 using FS2020Control;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Win32;
+using System.IO.IsolatedStorage;
+using iText.Svg.Renderers.Path.Impl;
 
 namespace FS2020Controls
 {
@@ -31,22 +35,49 @@ namespace FS2020Controls
   internal class XmlToSqlite
 
   {
-    public string FS2020RootDir { get; private set; }
-    public string FS2020ContainerDir { get; private set; }
+    public string? FS2020RootDir { get; private set; }
+    public string? FS2020ContainerDir { get; private set; }
     public string[] XmlFiles { get; private set; } = default!;
     public ControlContext? Context { get; }
+    public bool IsSteam { get; set; }
 
     public XmlToSqlite(ControlContext? ct = null)
     {
       Context = ct;
       FS2020RootDir = "";
+      CheckStandardInstallation();
+      if (FS2020RootDir == "")
+        CheckSteamInstallation();
+    }
+
+    private void CheckSteamInstallation()
+    {
+
+      string? steamPath =
+         Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", null) as string;
+      if (steamPath == null || steamPath == "")
+        throw new FS2020Exception("No settings for standard or Steam installation found");
+      string appPath = $"{steamPath}\\steamapps\\common\\MicrosoftFlightSimulator\\Input";
+      if (!Directory.Exists(appPath)) 
+        throw new FS2020Exception($"{appPath} for Steam settings does not exist");
+      FS2020ContainerDir = appPath;
+      IsSteam = true;
+    }
+
+    private void CheckStandardInstallation()
+    {
       string localDir = Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Packages");
       List<string> rootDir = Directory.GetDirectories(localDir)
          .Where(path => path.Contains("Microsoft.FlightSimulator"))
          .ToList();
-      if (rootDir.Count == 0)
+#if DEBUG
+      bool forceSteam = false; // Only debug
+#else
+      bool forceSteam = false; // Never for release
+#endif
+      if (rootDir.Count == 0 || forceSteam)
       {
-        throw new FS2020Exception("No Flight Simulator Directory found");
+        return;
       }
       if (rootDir.Count > 1)
       {
@@ -67,12 +98,15 @@ namespace FS2020Controls
           "Multiple Settings Directories found; don't know which one you want");
       }
       FS2020ContainerDir = containerDir[0];
-      // Directory name below this will change whenever control settings are changes
+      IsSteam = false;
+      // Directory name below this will change whenever control settings are changed
     }
 
     private bool IsXmlFile(string path)
     {
-      if (path.Length < FS2020ContainerDir.Length + 32)
+      if (FS2020ContainerDir == null)
+        return false;
+      if (!IsSteam && path.Length < FS2020ContainerDir.Length + 32)
         return false;
       string line = File.ReadLines(path).First();
       return line.StartsWith("<?xml ");
@@ -87,13 +121,16 @@ namespace FS2020Controls
         Context.SaveChanges();
         Context.Database.ExecuteSql($"UPDATE sqlite_sequence SET seq = 0 WHERE name = 'FSControls'");
       }
+      if (FS2020ContainerDir == null)
+        return 0;
+      string pattern = IsSteam ? "*.xml" : "*.";
       List<string> xmlFiles =
-        Directory.GetFiles(FS2020ContainerDir, "*.", SearchOption.AllDirectories)
+        Directory.GetFiles(FS2020ContainerDir, pattern, SearchOption.AllDirectories)
         .Where(path => IsXmlFile(path))
         .ToList();
       int savedToDb = 0;
 
-      foreach (string xmlFile in xmlFiles)
+      foreach (string? xmlFile in xmlFiles)
       {
         savedToDb += ImportXmlFile(xmlFile);
       }
@@ -101,15 +138,17 @@ namespace FS2020Controls
       return savedToDb;
     }
 
-    private static string MakeValidXml(string path)
+    private string MakeValidXml(string path)
     {
       string[] rawFile = File.ReadAllLines(path);
-      if (!rawFile[1].StartsWith("<Version"))
-        throw new FS2020Exception("Second line does not start with <Version.. \n" + path);
+      int vLine = IsSteam ? 2 : 1;
+      if (!rawFile[vLine].Trim().StartsWith("<Version"))
+        throw new FS2020Exception("No <Version.. \n" + path);
+      if (IsSteam) return String.Concat(rawFile);
       // Replace <Version>
-      rawFile[1] = "<FS2020>";
+      rawFile[1] = "<DefaulftInput>";  
       // Append Closing 
-      rawFile[rawFile.Length - 1] = rawFile[rawFile.Length - 1] + "</FS2020>";
+      rawFile[rawFile.Length - 1] = rawFile[rawFile.Length - 1] + "</DefaulftInput>";
       return String.Concat(rawFile);
     }
 
@@ -137,24 +176,34 @@ namespace FS2020Controls
       return s.ToString();
     }
 
-    public static string ToTitleCase(string str)
+    public static string? ToTitleCase(string str)
     {
       return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str.ToLower());
     }
 
     private int ImportXmlFile(string filePath)
     {
+      string friendlyName;
       XmlDocument doc = new XmlDocument();
       doc.LoadXml(MakeValidXml(filePath));
 
-      XmlNode fNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/FriendlyName")) ??
-        throw new FS2020Exception("No friendly name found in " + filePath);
-      XmlNode dNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/Device")) ??
+      XmlNode dNode = (doc.DocumentElement?.SelectSingleNode("/DefaulftInput/Device")) ??
         throw new FS2020Exception("No Device " + filePath);
       string deviceName = dNode.Attributes?["DeviceName"]?.Value ??
         throw new FS2020Exception("No Device Name" + filePath);
       XmlNodeList nodes = (doc.DocumentElement?.SelectNodes("//Action")) ??
         throw new FS2020Exception("No actions in " + filePath);
+      if (IsSteam)
+      {
+        XmlNode? pNode = (doc.DocumentElement?.SelectSingleNode("/DefaulftInput"));
+        friendlyName = pNode?.Attributes?["PlatformAvailability"]?.Value ?? "Default";
+      }
+      else
+      {
+        XmlNode fNode = (doc.DocumentElement?.SelectSingleNode("/DefaulftInput/FriendlyName")) ??
+          throw new FS2020Exception("No friendly name found in " + filePath);
+        friendlyName = fNode.InnerText;
+      }
       var fsControls = new List<FSControl>();
       foreach (XmlNode? xnode in nodes)
       {
@@ -202,7 +251,7 @@ namespace FS2020Controls
       var fsControlFile = new FSControlFile
       {
         Device = deviceName,
-        FriendlyName = fNode.InnerText,
+        FriendlyName = friendlyName,
         FileName = filePath,
         FSControls = fsControls
       };

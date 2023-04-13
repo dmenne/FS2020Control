@@ -3,10 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        xmlns:local="clr-namespace:FS2020Control"
         mc:Ignorable="d"
-        Title="FS2020 Controls" Height="734" Loaded="Window_Loaded"
+        Title="FS2020 Controls" Height="800" Loaded="Window_Loaded"
         MaxHeight="1000"
-        SizeToContent ="Width" Closing="Window_Closing" Icon="/fs2020.png" Width="1094">
+        SizeToContent ="Width" Closing="Window_Closing" Icon="/fs2020.png">
   <Window.Resources>
     <Style TargetType="Label">
       <Setter Property="Background" Value="#FFF2FBFA"></Setter>
@@ -37,40 +39,41 @@
                   DockPanel.Dock="Top" 
                   Label="Hide Debug" Click="HideDebugCheck_Click"/>
       </Menu>
-      <StackPanel>
+      <DockPanel>
+        <StackPanel>
         <Label Content="Click on header to sort"/>
         <DataGrid x:Name="FSControlFileGrid"
               SelectionMode="Single"
               DockPanel.Dock="Top"
               VerticalAlignment="Top"
+              Height="auto"
               Grid.Column="0"
-              MaxHeight="800"
-              EnableRowVirtualization="False"
+              EnableRowVirtualization="True"
               ItemsSource="{Binding Source={StaticResource fsControlFileViewSource}}" 
-              ScrollViewer.CanContentScroll="True" 
-              ScrollViewer.VerticalScrollBarVisibility="Auto"
               RowDetailsVisibilityMode="VisibleWhenSelected"
               AutoGenerateColumns="false" 
-              SelectedCellsChanged="FSControlFileGrid_SelectedCellsChanged" 
-              PreviewMouseDoubleClick="FSControlFileGrid_PreviewMouseDoubleClick">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="Device" Binding="{Binding Device}" IsReadOnly="True"
+              SelectedCellsChanged="FSControlFileGrid_SelectedCellsChanged" PreviewMouseDoubleClick="FSControlFileGrid_PreviewMouseDoubleClick">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Device" Binding="{Binding Device}" IsReadOnly="True"
                             Width="auto"/>
-            <DataGridTextColumn Header="Name" Binding="{Binding FriendlyName}" Width="auto"/>
-          </DataGrid.Columns>
+          <DataGridTextColumn Header="Name" Binding="{Binding FriendlyName}" Width="auto"/>
+        </DataGrid.Columns>
         </DataGrid>
-      </StackPanel>
-      <StackPanel>
+        <StackPanel>
         <Label Content="Select one or multiple actors (none=all)" />
         <ListBox x:Name="SelectedControlsBox" 
                  Height="auto" d:ItemsSource="{d:SampleData ItemCount=5}"
-                 SelectionMode="Multiple" 
-                 SelectionChanged="SelectedControlsBox_SelectionChanged"/>
-      </StackPanel>
+                 SelectionMode="Multiple" SelectionChanged="SelectedControlsBox_SelectionChanged">
+        </ListBox>
+          </StackPanel>
+        </StackPanel>
+    </DockPanel>
       <StackPanel>
-        <Label Content="Click on header to sort (multiple: Shift+Click)" />
-        <DataGrid x:Name="FSControlGrid" 
+      <Label Content="Click on header to sort (multiple: Shift+Click)" />
+      <DataGrid x:Name="FSControlGrid" 
               VerticalAlignment="Top"
+              Grid.Column="1"
+              Grid.Row="0"
               MaxHeight="800"
               AutoGenerateColumns="false"
               ScrollViewer.CanContentScroll="True" 
@@ -78,15 +81,15 @@
               ItemsSource="{Binding Source = {StaticResource fsControlViewSource}}" 
               EnableRowVirtualization="True" 
               >
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="Actor" Binding="{Binding Actor}"  Width = "Auto" />
-            <DataGridTextColumn Header="Action" Binding="{Binding FriendlyAction}" Width = "Auto"/>
-            <DataGridTextColumn Header="Primary" Binding="{Binding PrimaryKeys}" Width = "Auto"/>
-            <DataGridTextColumn Header="Secondary" Binding="{Binding SecondaryKeys}" Width = "Auto"/>
-          </DataGrid.Columns>
-        </DataGrid>
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Actor" Binding="{Binding Actor}"  Width = "Auto" />
+        <DataGridTextColumn Header="Action" Binding="{Binding FriendlyAction}" Width = "Auto"/>
+        <DataGridTextColumn Header="Primary" Binding="{Binding PrimaryKeys}" Width = "Auto"/>
+        <DataGridTextColumn Header="Secondary" Binding="{Binding SecondaryKeys}" Width = "Auto"/>
+      </DataGrid.Columns>
+    </DataGrid>
       </StackPanel>
-    </DockPanel>
+      </DockPanel>
   </Grid>
-
+  
 </Window>
