@@ -8,6 +8,8 @@ using System.ComponentModel;
 using System.Windows.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
+using System;
 
 // When the designer complaints or crashes, delete the bin folder and refresh
 // https://learn.microsoft.com/en-us/ef/core/get-started/wpf
@@ -170,9 +172,12 @@ namespace FS2020Control
     private void Pdf_Click(object sender, RoutedEventArgs e)
     {
       if (FSControlFileGrid.SelectedItem is not FSControlFile cf) return;
-      string pdfFile = Export.ItemsCollectionToPdf(FSControlGrid.Items, 
-        controlContext.DbDir, cf.Device, cf.FriendlyName );
-      Export.OpenWithDefaultProgram(pdfFile);
+      using (new WaitCursor())
+      {
+        string pdfFile = Export.ItemsCollectionToPdf(FSControlGrid.Items,
+          controlContext.DbDir, cf.Device, cf.FriendlyName);
+        Export.OpenWithDefaultProgram(pdfFile);
+      }
     }
 
     private void Excel_Click(object sender, RoutedEventArgs e)
@@ -186,9 +191,33 @@ namespace FS2020Control
 
     private void Reload_Click(object sender, RoutedEventArgs e)
     {
-      controlContext.FSControlsFile.RemoveRange(controlContext.FSControlsFile);
-      controlContext.SaveChanges(); 
-      LoadData();
+      using (new WaitCursor())
+      {
+        controlContext.FSControlsFile.RemoveRange(controlContext.FSControlsFile);
+        controlContext.SaveChanges();
+        LoadData();
+      }
     }
+  }
+  
+  public class WaitCursor : IDisposable
+  {
+    private Cursor _previousCursor;
+
+    public WaitCursor()
+    {
+      _previousCursor = Mouse.OverrideCursor;
+
+      Mouse.OverrideCursor = Cursors.Wait;
+    }
+
+    #region IDisposable Members
+
+    public void Dispose()
+    {
+      Mouse.OverrideCursor = _previousCursor;
+    }
+
+    #endregion
   }
 }
