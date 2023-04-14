@@ -38,9 +38,17 @@ namespace FS2020Control
 
     public void CheckInstallations()
     {
-      CheckStandardInstallation();
-      if (FS2020RootDir == "")
-        CheckSteamInstallation();
+#if DEBUG
+      bool forceStore = true; // Debug 
+#else
+      bool forceStore = false; // Always check for Steam in release
+#endif
+    if (!forceStore)
+    {
+      CheckSteamInstallation();
+    }
+    if (FS2020ContainerDir == "" || forceStore)
+        CheckStandardInstallation();
     }
 
     private void CheckSteamInstallation()
@@ -70,12 +78,7 @@ namespace FS2020Control
       List<string> rootDir = Directory.GetDirectories(localDir)
          .Where(path => path.Contains("Microsoft.FlightSimulator"))
          .ToList();
-#if DEBUG
-      bool forceSteam = false; // Only debug
-#else
-      bool forceSteam = false; // Never for release
-#endif
-      if (rootDir.Count == 0 || forceSteam)
+      if (rootDir.Count == 0)
       {
         return;
       }
@@ -85,6 +88,8 @@ namespace FS2020Control
           "Multiple Flight Simulator Directories found; don't know which one you want");
       }
       FS2020RootDir = Path.Combine(rootDir[0], "SystemAppData", "wgs");
+      if (!Directory.Exists(FS2020RootDir))
+        return;
       List<string> containerDir = Directory.GetDirectories(FS2020RootDir)
         .Where(path => path.Length >= FS2020RootDir.Length + 48)
         .ToList();

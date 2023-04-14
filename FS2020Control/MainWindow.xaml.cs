@@ -166,7 +166,6 @@ namespace FS2020Control
           "This message will be shown only once per session.\n" +
           "When you select <Yes>, the file will be opened with Notepad.\n" +
           "When you select <No>, the full path to the settings will be copied to the clipboard.\n" +
-          "The format of the settings is not valid XML because a root is missing.\n" +
           "Any changes to the file are at your own risk.\n" +
           "The file will be deleted and replaced with a new one when\n" +
           "you make changes in the control settings of FS2020.",
