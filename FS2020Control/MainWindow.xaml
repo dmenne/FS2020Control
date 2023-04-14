@@ -36,6 +36,9 @@
                   IsChecked="True"
                   DockPanel.Dock="Top" 
                   Label="Hide Debug" Click="HideDebugCheck_Click"/>
+        <Label x:Name="SettingsLabel" Background="Bisque" BorderThickness="2" BorderBrush="Black">
+          No settings
+        </Label>
       </Menu>
       <StackPanel>
         <Label Content="Click on header to sort"/>

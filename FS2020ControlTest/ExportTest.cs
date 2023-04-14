@@ -27,7 +27,7 @@ namespace FS2020ControlTest
       string outFile = Path.Combine(Path.GetTempPath(), "tables-create.xlsx");
       wb.SaveAs(outFile);
       Assert.IsTrue(File.Exists(outFile));
-      File.Delete(outFile); 
+      File.Delete(outFile);
     }
 
   }

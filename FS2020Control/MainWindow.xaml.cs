@@ -1,15 +1,16 @@
-﻿using System.Diagnostics;
-using FS2020Controls;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
-using System.ComponentModel;
 using System.Windows.Data;
-using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 using System.Windows.Input;
-using System;
+using MsgBoxEx;
+using System.Windows.Interop;
 
 // When the designer complaints or crashes, delete the bin folder and refresh
 // https://learn.microsoft.com/en-us/ef/core/get-started/wpf
@@ -25,6 +26,7 @@ namespace FS2020Control
     private readonly CollectionViewSource fsControlFileViewSource = default!;
     private readonly CollectionViewSource fsControlViewSource = default!;
     MessageBoxResult? MessageBoxRes = null;
+    private bool FromDatabase { get; set; }
 
     public MainWindow()
     {
@@ -45,19 +47,34 @@ namespace FS2020Control
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+      MessageBoxEx.SetFont("Arial", 15.0);
       LoadData();
     }
-    
-    private void LoadData() { 
+
+    private void LoadData()
+    {
       controlContext.Database.EnsureCreated();
-      if (!controlContext.HasData)
+      var xh = new XmlToSqlite(controlContext);
+      try
       {
-        var xh = new XmlToSqlite(controlContext);
-        _ = xh.ImportXmlFiles();
+        FromDatabase = controlContext.HasData;
+        if (!FromDatabase)
+        {
+          xh.CheckInstallations();
+          _ = xh.ImportXmlFiles();
+        }
+
+        controlContext.FSControlsFile.Load();
+        fsControlFileViewSource.Source =
+          controlContext.FSControlsFile.Local.ToObservableCollection().OrderBy(a => a.FriendlyName);
       }
-      controlContext.FSControlsFile.Load();
-      fsControlFileViewSource.Source =
-        controlContext.FSControlsFile.Local.ToObservableCollection().OrderBy(a => a.FriendlyName);
+      catch (FS2020Exception ex)
+      {
+        // https://www.codeproject.com/Articles/5290638/Customizable-WPF-MessageBox
+        MessageBoxEx.Show(ex.Message, "FS2020 Controls");
+      }
+      SettingsLabel.Content = FromDatabase ? "From Database": (
+        xh.IsSteam ? "Steam controls" : "Store controls");
       UpdateSelectedControlsBox();
     }
 
@@ -70,9 +87,9 @@ namespace FS2020Control
 
     private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
     {
-      FSControl ? fsc = e.Item as FSControl;
+      FSControl? fsc = e.Item as FSControl;
       if (fsc == null) return;
-      bool hc = HideDebugCheck.IsChecked??  false;
+      bool hc = HideDebugCheck.IsChecked ?? false;
       if (hc)
       {
         Match m = Regex.Match(fsc.FriendlyAction!, @"Debug|Devmode",
@@ -84,11 +101,12 @@ namespace FS2020Control
       int itemsCount = SelectedControlsBox.Items.Count;
       if (selectedCount == 0 || selectedCount == itemsCount)
         return;
-      bool accepted = false; 
-      for ( int i = 0; i < selectedCount; i++ )
+      bool accepted = false;
+      for (int i = 0; i < selectedCount; i++)
       {
         string selected = SelectedControlsBox.SelectedItems[i] as string ?? "";
-        if ( selected == fsc.Actor ) {
+        if (selected == fsc.Actor)
+        {
           accepted = true;
           break;
         }
@@ -100,13 +118,13 @@ namespace FS2020Control
     {
       Services.Tracker.PersistAll();
     }
-    
+
     private void UpdateSelectedControlsBox()
     {
       SelectedControlsBox.SelectedItems.Clear(); // Must be first
       SelectedControlsBox.Items.Clear();
       var da = DistinctActors();
-      for (int i = 0; i< da.Count; i++)
+      for (int i = 0; i < da.Count; i++)
         SelectedControlsBox.Items.Add(da[i]);
     }
 
@@ -114,7 +132,7 @@ namespace FS2020Control
     {
       var cgItems =
        CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource);
-      if (cgItems == null) 
+      if (cgItems == null)
         return new List<string?>();
       IEnumerable<FSControl> cg = cgItems
         .OfType<FSControl>();
@@ -122,13 +140,13 @@ namespace FS2020Control
       if (hc)
         cg = cg
           .Where(x => x.Actor != "Debug");
-      return 
-        cg 
+      return
+        cg
         .Select(x => x.Actor)
         .Distinct()
         .OrderBy(x => x)
         .ToList();
-      }
+    }
 
     private void HideDebugCheck_Click(object sender, RoutedEventArgs e)
     {
@@ -144,10 +162,10 @@ namespace FS2020Control
     private void FSControlFileGrid_PreviewMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
     {
       if (FSControlFileGrid.SelectedItem is not FSControlFile ct) return;
-      MessageBoxRes ??= MessageBox.Show(
+      MessageBoxRes ??= MessageBoxEx.Show(
           "This message will be shown only once per session.\n" +
           "When you select <Yes>, the file will be opened with Notepad.\n" +
-          "When you select <No>, the full path to the settings will be copied to the clipboard.\n"+
+          "When you select <No>, the full path to the settings will be copied to the clipboard.\n" +
           "The format of the settings is not valid XML because a root is missing.\n" +
           "Any changes to the file are at your own risk.\n" +
           "The file will be deleted and replaced with a new one when\n" +
@@ -199,7 +217,7 @@ namespace FS2020Control
       }
     }
   }
-  
+
   public class WaitCursor : IDisposable
   {
     private Cursor _previousCursor;

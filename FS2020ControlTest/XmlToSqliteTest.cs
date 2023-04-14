@@ -1,5 +1,4 @@
 using FS2020Control;
-using FS2020Controls;
 using System.Text.RegularExpressions;
 
 namespace FS2020ControlTest
@@ -16,6 +15,7 @@ namespace FS2020ControlTest
         try
         {
           var xh = new XmlToSqlite();
+          xh.CheckInstallations();
         }
         catch
         {

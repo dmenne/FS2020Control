@@ -1,28 +1,17 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
-using System.Xml;
 using System.Text;
 using System.Text.Json;
-using System.Data;
-using FS2020Control;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.Win32;
-using System.IO.IsolatedStorage;
-using iText.Svg.Renderers.Path.Impl;
+using System.Xml;
 
-namespace FS2020Controls
+namespace FS2020Control
 {
-  public class FS2020Exception : Exception
-  {
-    public FS2020Exception(string message) : base(message)
-    {
-    }
-  }
-
   static class ObjectHelper
   {
     public static void Dump<T>(this T x)
@@ -45,6 +34,10 @@ namespace FS2020Controls
     {
       Context = ct;
       FS2020RootDir = "";
+    }
+
+    public void CheckInstallations()
+    {
       CheckStandardInstallation();
       if (FS2020RootDir == "")
         CheckSteamInstallation();
@@ -52,14 +45,20 @@ namespace FS2020Controls
 
     private void CheckSteamInstallation()
     {
-
-      string? steamPath =
+#pragma warning disable CA1416 // Use pattern matching
+      var steamPath =
          Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", null) as string;
+#pragma warning restore CA1416 // Use pattern matching
       if (steamPath == null || steamPath == "")
         throw new FS2020Exception("No settings for standard or Steam installation found");
       string appPath = $"{steamPath}\\steamapps\\common\\MicrosoftFlightSimulator\\Input";
-      if (!Directory.Exists(appPath)) 
-        throw new FS2020Exception($"{appPath} for Steam settings does not exist");
+      if (!Directory.Exists(appPath))
+        throw new FS2020Exception(
+          String.Join(Environment.NewLine,
+          "According to the registry, the directory ", "",
+          appPath, "",
+          "should contain the input files.",
+          "This directory could not be found on your computer"));
       FS2020ContainerDir = appPath;
       IsSteam = true;
     }
@@ -67,6 +66,7 @@ namespace FS2020Controls
     private void CheckStandardInstallation()
     {
       string localDir = Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Packages");
+      if (!Directory.Exists(localDir)) return;
       List<string> rootDir = Directory.GetDirectories(localDir)
          .Where(path => path.Contains("Microsoft.FlightSimulator"))
          .ToList();
@@ -146,7 +146,7 @@ namespace FS2020Controls
         throw new FS2020Exception("No <Version.. \n" + path);
       if (IsSteam) return String.Concat(rawFile);
       // Replace <Version>
-      rawFile[1] = "<DefaulftInput>";  
+      rawFile[1] = "<DefaulftInput>";
       // Append Closing 
       rawFile[rawFile.Length - 1] = rawFile[rawFile.Length - 1] + "</DefaulftInput>";
       return String.Concat(rawFile);

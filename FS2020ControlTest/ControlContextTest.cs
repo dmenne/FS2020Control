@@ -13,7 +13,7 @@ namespace FS2020ControlTest
 
     };
 
-    readonly FSControl sampleControlNoSecondary = new ()
+    readonly FSControl sampleControlNoSecondary = new()
     {
       ActionName = "KEY_COCKPIT_QUICKVIEW1",
       Actor = "Key",
@@ -22,7 +22,7 @@ namespace FS2020ControlTest
       PrimaryKeysCode = "13"
     };
 
-    readonly  FSControl sampleControlAll = new()
+    readonly FSControl sampleControlAll = new()
     {
       ActionName = "KEY_COCKPIT_QUICKVIEW5",
       Actor = "Key",

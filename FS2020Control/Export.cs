@@ -1,27 +1,26 @@
 ﻿//Imports
-using iText.Kernel.Pdf;
-using iText.Layout.Element;
-using iText.Kernel.Events;
-using iText.Kernel.Pdf.Canvas;
-using iText.Kernel.Geom;
-using iLayout = iText.Layout;
-using iText.Layout.Properties;
-using iText.Kernel.Colors;
-using iBorders = iText.Layout.Borders;
 using ClosedXML.Excel;
-using System.Diagnostics;
-
-using System.IO;
-using System.Windows.Controls;
+using iText.Kernel.Colors;
+using iText.Kernel.Events;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Kernel.Pdf.Canvas;
+using iText.Layout.Element;
+using iText.Layout.Properties;
 using System;
 using System.Data;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Controls;
+using iBorders = iText.Layout.Borders;
+using iLayout = iText.Layout;
 
 namespace FS2020Control
 {
-  internal class TopEventHandler: IEventHandler
+  internal class TopEventHandler : IEventHandler
   {
     private readonly string title;
-  
+
     public TopEventHandler(string title)
     {
       this.title = title;
@@ -41,10 +40,10 @@ namespace FS2020Control
       canvas.SetFontColor(ColorConstants.BLUE);
       canvas.SetFontSize(25);
       // Strange: Documentation says this should be angle in degree
-      float angle = (float)(Math.PI/ 2.0);
+      float angle = (float)(Math.PI / 2.0);
       string sideText = $"{title} Page {pageNumber}";
       canvas.ShowTextAligned(sideText,
-          pageSize.GetWidth()-20,
+          pageSize.GetWidth() - 20,
           pageSize.GetHeight() / 2,
           TextAlignment.CENTER,
           VerticalAlignment.BOTTOM,
@@ -172,6 +171,6 @@ namespace FS2020Control
       document.Close();
       return outFile;
     }
-    
+
   }
 }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.IO;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace FS2020Control
@@ -24,7 +24,8 @@ namespace FS2020Control
       DbPath = Path.Combine(DbDir, baseName);
     }
 
-    public bool HasData { 
+    public bool HasData
+    {
       get
       {
         return FSControlsFile.Any() &&
@@ -42,6 +43,6 @@ namespace FS2020Control
     public DbSet<FSControlFile> FSControlsFile { get; set; } = default!;
     public DbSet<FSControl> FSControls { get; set; } = default!;
 
-  
+
   }
 }
