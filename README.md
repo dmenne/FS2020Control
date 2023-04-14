@@ -4,6 +4,7 @@
 
 [dieter.menne\@menne-biomed.de](mailto:dieter.menne@menne-biomed.de)
 
+Thanks to @pmb2019 for testing on the Steam platform.
 
 Getting an overview of the assigned keys for keyboard, mouse, flight stick in Microsoft 
 Flight Simulator 2020 is not easy. The local copies of the control settings are stored 
@@ -23,15 +24,6 @@ replaced by another file with cryptic name.
 
 In short: Microsoft does not want us to mess with it, and may change everything without notice.
 
-## Installation
-
-Releases are on [flightsim.to](https://flightsim.to/d/dmenne/fs2020-control).
-
-- Unzip SetupFS2020Control.zip into a temporary directory
-- Double-click `setup.exe`
-- You can delete all temporary files after installation
-
-
 ## What the app does
 
 -   Tries to find the settings files of the controls and scans all - I am not sure if this will work in all installations;
@@ -43,6 +35,18 @@ Releases are on [flightsim.to](https://flightsim.to/d/dmenne/fs2020-control).
 Database, Excel and PDF file are stored in directory `Documents/FS2020Key` 
 with names such as `FS2020Controls_Mouse_A300.pdf`. The directory is created when it does not exist.
 
+## Installation
+
+Releases are on [flightsim.to](https://flightsim.to/d/dmenne/fs2020-control).
+
+- Unzip SetupFS2020Control.zip into a temporary directory
+- Double-click `setup.exe`
+- You can delete all temporary files after installation
+
+## Steam
+
+Steam installations are tricky, and I had to rely on @pmb2019 for debugging. I someone has both Store and 
+Steam, or swapped one for the other, nasty things might happen. Please report to github.
 
 ## Main Window
 
