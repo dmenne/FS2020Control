@@ -19,7 +19,7 @@
     <PackageIcon>fs2020.png</PackageIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <AssemblyVersion>1.2.3</AssemblyVersion>
+    <AssemblyVersion>1.2.4</AssemblyVersion>
     <FileVersion></FileVersion>
     <ApplicationIcon>fs2020.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>

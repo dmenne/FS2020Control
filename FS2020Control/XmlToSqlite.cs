@@ -40,7 +40,7 @@ namespace FS2020Control
     public void CheckInstallations()
     {
 #if DEBUG
-      bool forceStore = true; //Debug 
+      bool forceStore = false; //Debug 
 #else
       bool forceStore = false; // Always check for Steam in release
 #endif
@@ -62,12 +62,15 @@ namespace FS2020Control
         return;
       string appPath = $"{steamPath}\\steamapps\\common\\MicrosoftFlightSimulator\\Input";
       if (!Directory.Exists(appPath))
+        return;
+/*
         throw new FS2020Exception(
           String.Join(Environment.NewLine,
           "According to the registry, the directory ", "",
           appPath, "",
           "should contain the input files.",
           "This directory could not be found on your computer"));
+*/
       FS2020ContainerDir = appPath;
       IsSteam = true;
     }
