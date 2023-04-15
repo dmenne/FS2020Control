@@ -34,12 +34,13 @@ namespace FS2020Control
     {
       Context = ct;
       FS2020RootDir = "";
+      FS2020ContainerDir = "";
     }
 
     public void CheckInstallations()
     {
 #if DEBUG
-      bool forceStore = true; // Debug 
+      bool forceStore = true; //Debug 
 #else
       bool forceStore = false; // Always check for Steam in release
 #endif
@@ -53,12 +54,12 @@ namespace FS2020Control
 
     private void CheckSteamInstallation()
     {
-#pragma warning disable CA1416 // Use pattern matching
+#pragma warning disable CA1416 
       var steamPath =
          Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", null) as string;
-#pragma warning restore CA1416 // Use pattern matching
+#pragma warning restore CA1416 
       if (steamPath == null || steamPath == "")
-        throw new FS2020Exception("No settings for standard or Steam installation found");
+        return;
       string appPath = $"{steamPath}\\steamapps\\common\\MicrosoftFlightSimulator\\Input";
       if (!Directory.Exists(appPath))
         throw new FS2020Exception(
