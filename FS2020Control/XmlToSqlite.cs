@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using iText.Kernel.Colors;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
+using static iText.Kernel.Pdf.Colorspace.PdfSpecialCs;
 
 namespace FS2020Control
 {
@@ -40,16 +42,27 @@ namespace FS2020Control
     public void CheckInstallations()
     {
 #if DEBUG
-      bool forceStore = false; //Debug 
+      bool forceSteam = true; //Debug 
 #else
-      bool forceStore = false; // Always check for Steam in release
+      bool forceSteam = false; // Always check for Store first
 #endif
-    if (!forceStore)
-    {
-      CheckSteamInstallation();
-    }
-    if (FS2020ContainerDir == "" || forceStore)
+      if (!forceSteam)
         CheckStandardInstallation();
+      if (FS2020ContainerDir == "" || forceSteam)
+        CheckSteamInstallation();
+    }
+
+    private (string file, DateTime date)
+      GetLastFileWriteTime(string path, string pattern = "inputprofile_*")
+    {
+      var fs = Directory.EnumerateFiles(path, pattern);
+      (string file, DateTime date) emptyTuple = default;
+      if (!fs.Any())
+        return emptyTuple;
+      return fs
+        .Select(f => (file: f, date: File.GetLastWriteTime(f)))
+        .OrderBy(f => f.date)
+        .Last();
     }
 
     private void CheckSteamInstallation()
@@ -60,17 +73,29 @@ namespace FS2020Control
 #pragma warning restore CA1416 
       if (steamPath == null || steamPath == "")
         return;
-      string appPath = $"{steamPath}\\steamapps\\common\\MicrosoftFlightSimulator\\Input";
-      if (!Directory.Exists(appPath))
-        return;
-/*
-        throw new FS2020Exception(
-          String.Join(Environment.NewLine,
-          "According to the registry, the directory ", "",
-          appPath, "",
-          "should contain the input files.",
-          "This directory could not be found on your computer"));
-*/
+      string appPath = $"{steamPath}\\userdata";
+      // Assumption: 1250410 is FS2020 token
+      // https://forums.flightsimulator.com/t/anyone-know-where-your-controller-config-is-stored-on-disk/241669/9
+      var dirs = Directory.EnumerateDirectories(appPath, "*.*",
+        SearchOption.AllDirectories)
+      .Where(dir => dir.EndsWith("1250410\\remote"))
+      .ToList();
+
+      if (dirs.Count == 0) return;
+      // When there is only one directory, use it
+      if (dirs.Count == 1)
+      {
+        appPath = dirs[0];
+      } else // When there are multiple directories, use that one with the last changed file
+      {
+        var (file, date) =
+          dirs.Select(f => GetLastFileWriteTime(f))
+          .OrderBy(f => f.date)
+          .Last();
+
+        appPath = Path.GetDirectoryName(file) ?? "";
+      }
+
       FS2020ContainerDir = appPath;
       IsSteam = true;
     }
@@ -132,7 +157,7 @@ namespace FS2020Control
       }
       if (FS2020ContainerDir == null)
         return 0;
-      string pattern = IsSteam ? "*.xml" : "*.";
+      string pattern = IsSteam ? "inputprofile_*" : "*.";
       List<string> xmlFiles =
         Directory.GetFiles(FS2020ContainerDir, pattern, SearchOption.AllDirectories)
         .Where(path => IsXmlFile(path))
@@ -150,14 +175,12 @@ namespace FS2020Control
     private string MakeValidXml(string path)
     {
       string[] rawFile = File.ReadAllLines(path);
-      int vLine = IsSteam ? 2 : 1;
-      if (!rawFile[vLine].Trim().StartsWith("<Version"))
+      if (!rawFile[1].Trim().StartsWith("<Version"))
         throw new FS2020Exception("No <Version.. \n" + path);
-      if (IsSteam) return String.Concat(rawFile);
-      // Replace <Version>
-      rawFile[1] = "<DefaulftInput>";
-      // Append Closing 
-      rawFile[rawFile.Length - 1] = rawFile[rawFile.Length - 1] + "</DefaulftInput>";
+      // Replace <Version> 
+      rawFile[1] = "<FS2020>"; // Dummy root element
+      // Append Closing (using "from end" operator)
+      rawFile[^1] = rawFile[^1] + "</FS2020>";
       return String.Concat(rawFile);
     }
 
@@ -196,23 +219,15 @@ namespace FS2020Control
       XmlDocument doc = new XmlDocument();
       doc.LoadXml(MakeValidXml(filePath));
 
-      XmlNode dNode = (doc.DocumentElement?.SelectSingleNode("/DefaulftInput/Device")) ??
+      XmlNode dNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/Device")) ??
         throw new FS2020Exception("No Device " + filePath);
       string deviceName = dNode.Attributes?["DeviceName"]?.Value ??
         throw new FS2020Exception("No Device Name" + filePath);
       XmlNodeList nodes = (doc.DocumentElement?.SelectNodes("//Action")) ??
         throw new FS2020Exception("No actions in " + filePath);
-      if (IsSteam)
-      {
-        XmlNode? pNode = (doc.DocumentElement?.SelectSingleNode("/DefaulftInput"));
-        friendlyName = pNode?.Attributes?["PlatformAvailability"]?.Value ?? "Default";
-      }
-      else
-      {
-        XmlNode fNode = (doc.DocumentElement?.SelectSingleNode("/DefaulftInput/FriendlyName")) ??
-          throw new FS2020Exception("No friendly name found in " + filePath);
-        friendlyName = fNode.InnerText;
-      }
+      XmlNode fNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/FriendlyName")) ??
+        throw new FS2020Exception("No friendly name found in " + filePath);
+      friendlyName = fNode.InnerText;
       var fsControls = new List<FSControl>();
       foreach (XmlNode? xnode in nodes)
       {
