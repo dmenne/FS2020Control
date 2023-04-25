@@ -1,36 +1,24 @@
 using FS2020Control;
+using System.Runtime.Versioning;
 using System.Text.RegularExpressions;
 
 namespace FS2020ControlTest
 {
+
+  [SupportedOSPlatform("windows")]
   [TestClass]
   public class XmlToSqliteTest
   {
-
-    private static bool NoFS
-    {
-      // Cannot run tests on github actions
-      get
-      {
-        try
-        {
-          var xh = new XmlToSqlite();
-          xh.CheckInstallations();
-        }
-        catch
-        {
-          return true;
-        }
-        return false;
-      }
-    }
-
+    // There is no simple method to find out if FS is installed
+    // Even ChatGPT returns unusable code
+    // Gave up, set it manually
+    private bool NoFS = false; 
 
     [TestMethod]
-    public void PathToFSMustExist()
-    {
+    public void PathToFSMustExist() {
       if (NoFS) return;
       var xh = new XmlToSqlite();
+      xh.CheckInstallations();
       Assert.IsTrue(Directory.Exists(xh.FS2020RootDir));
       Assert.IsTrue(Directory.Exists(xh.FS2020ContainerDir));
     }
@@ -41,6 +29,7 @@ namespace FS2020ControlTest
       if (NoFS) return;
       // No database
       var xh = new XmlToSqlite();
+      xh.CheckInstallations();
       xh.ImportXmlFiles();
       Assert.IsTrue(xh.XmlFiles.Length > 10);
     }
@@ -50,6 +39,7 @@ namespace FS2020ControlTest
     {
       if (NoFS) return;
       var xh = new XmlToSqlite();
+      xh.CheckInstallations();
       var s = new StringWriter();
       Console.SetOut(s);
       xh.ImportXmlFiles();
@@ -57,7 +47,27 @@ namespace FS2020ControlTest
     }
 
     [TestMethod]
-    public void UseDatabaseWhenDataAreAvailable()
+    public void UseDatabaseWhenDataAreAvailableOneFile()
+    {
+      // This test works without FS installed
+      using (var ct = new ControlContext(test: true))
+      {
+        Assert.IsNotNull(ct);
+        ct.Database.EnsureDeleted();
+        ct.Database.EnsureCreated();
+        Assert.IsFalse(ct.HasData);
+
+        var xh = new XmlToSqlite(ct);
+        xh.CheckInstallations();
+        string big_store = "../../../testdata/big_store.xml";
+        Assert.IsTrue(File.Exists(big_store));
+        int x = xh.ImportXmlFile(big_store);
+        Assert.IsTrue(x > 0);
+      }
+    }
+
+    [TestMethod]
+    public void UseDatabaseWhenDataAreAvailableAllFiles()
     {
       if (NoFS) return;
       using (var ct = new ControlContext(test: true))
@@ -68,16 +78,13 @@ namespace FS2020ControlTest
         Assert.IsFalse(ct.HasData);
 
         var xh = new XmlToSqlite(ct);
+        xh.CheckInstallations();
         xh.ImportXmlFiles();
 
         int? keys = xh.Context?.FSControls.Count();
         Assert.IsTrue(ct.HasData);
         Assert.IsNotNull(keys);
-        Assert.IsTrue(keys > 10);
-      }
-      using (var ct = new ControlContext(test: true))
-      {
-        Console.WriteLine(ct.FSControlsFile.First().FileName);
+        Assert.IsTrue(keys > 1000);
       }
     }
   }

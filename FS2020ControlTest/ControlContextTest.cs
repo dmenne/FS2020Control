@@ -17,6 +17,7 @@ namespace FS2020ControlTest
     {
       ActionName = "KEY_COCKPIT_QUICKVIEW1",
       Actor = "Key",
+      ContextName = "ContextName",
       FriendlyAction = "Cockpit Quickviews 1",
       PrimaryKeys = "primary",
       PrimaryKeysCode = "13"
@@ -26,6 +27,7 @@ namespace FS2020ControlTest
     {
       ActionName = "KEY_COCKPIT_QUICKVIEW5",
       Actor = "Key",
+      ContextName = "ContextName",
       FriendlyAction = "Cockpit Quickviews 5",
       PrimaryKeys = "allprimary",
       PrimaryKeysCode = "16",

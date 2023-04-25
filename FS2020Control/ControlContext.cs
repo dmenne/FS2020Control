@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -22,6 +23,21 @@ namespace FS2020Control
       }
       string baseName = test ? "FS2020Test.sqlite" : "FS2020.sqlite";
       DbPath = Path.Combine(DbDir, baseName);
+      TruncateDatabaseIfOlderThanExe();
+    }
+
+    private void TruncateDatabaseIfOlderThanExe()
+    {
+      if (!File.Exists(DbPath)) return;
+      string exeFile = Path.Combine(Directory.GetCurrentDirectory(), "FS2020Control.exe");
+      DateTime lastWriteExe = File.GetLastWriteTime(exeFile);
+      DateTime lastWriteDb = File.GetLastWriteTime(DbPath);
+      TimeSpan diffTime = lastWriteExe - lastWriteDb;
+      if (diffTime.TotalSeconds > 0)
+      {
+        File.Delete(DbPath);
+        Debug.WriteLine(@"Your database file was created by an earlier version of the program. It has been deleted and will be recreated.");
+      }
     }
 
     public bool HasData

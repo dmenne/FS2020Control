@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net7.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Nullable>enable</Nullable>
     <PublishSingleFile>true</PublishSingleFile>
@@ -18,7 +18,7 @@
     <PackageIcon>fs2020.png</PackageIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <AssemblyVersion>1.2.4</AssemblyVersion>
+    <AssemblyVersion>1.2.5</AssemblyVersion>
     <FileVersion></FileVersion>
     <ApplicationIcon>fs2020.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
@@ -40,6 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.101.0" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="7.1.0" />
     <PackageReference Include="itext7" Version="7.2.5" />
     <PackageReference Include="Jot" Version="2.1.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />

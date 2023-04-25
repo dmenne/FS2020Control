@@ -35,7 +35,7 @@ namespace FS2020Control
       Rectangle pageSize = page.GetPageSize();
       PdfCanvas pdfCanvas = new(page.NewContentStreamBefore(), page.GetResources(), pdfDoc);
 
-      //Add watermark
+      // Add watermark
       iLayout.Canvas canvas = new iLayout.Canvas(pdfCanvas, pageSize);
       canvas.SetFontColor(ColorConstants.BLUE);
       canvas.SetFontSize(25);
@@ -43,7 +43,7 @@ namespace FS2020Control
       float angle = (float)(Math.PI / 2.0);
       string sideText = $"{title} Page {pageNumber}";
       canvas.ShowTextAligned(sideText,
-          pageSize.GetWidth() - 20,
+          pageSize.GetWidth() - 10,
           pageSize.GetHeight() / 2,
           TextAlignment.CENTER,
           VerticalAlignment.BOTTOM,
@@ -55,9 +55,6 @@ namespace FS2020Control
   internal static class Export
   {
     private const int LastColumn = 16384;
-    private static readonly string[] showColumns =
-      { "Actor", "FriendlyAction", "PrimaryKeys", "SecondaryKeys" };
-
     public static void OpenWithDefaultProgram(string path)
     {
       using Process fo = new();
@@ -76,6 +73,7 @@ namespace FS2020Control
       DataTable dt = new();
       dt.Columns.Add("FriendlyName", typeof(string));
       dt.Columns.Add("Device", typeof(string));
+      dt.Columns.Add("ContextName", typeof(string));
       dt.Columns.Add("ActionName", typeof(string));
       dt.Columns.Add("Actor", typeof(string));
       dt.Columns.Add("FriendlyAction", typeof(string));
@@ -89,6 +87,7 @@ namespace FS2020Control
         dt.Rows.Add(
           fs.FSControlFile.FriendlyName,
           fs.FSControlFile.Device,
+          fs.ContextName,
           fs.ActionName,
           fs.Actor,
           fs.FriendlyAction,
@@ -103,16 +102,20 @@ namespace FS2020Control
       string dName = device[..Math.Min(30 - fName.Length, device.Length)];
       var ws = wb.AddWorksheet($"{dName}-{fName}");
       ws.FirstCell().InsertTable(dt);
-      ws.Columns("A:I").AdjustToContents();
-      ws.Columns(10, LastColumn).Hide();
+      ws.Columns("A:J").AdjustToContents();
+      ws.Columns(11, LastColumn).Hide();
       wb.SaveAs(outFile);
       return outFile;
     }
+
 
     public static string ItemsCollectionToPdf(ItemCollection it,
         string outDir, string device, string friendlyName,
         int gray = 240, int fontSize = 12, int padding = 5)
     {
+      string[] showColumns =
+        { "ContextName", "Actor", "FriendlyAction", "PrimaryKeys", "SecondaryKeys" };
+
       if (it.Count == 0) return "";
       iLayout.Document document;
       string outFile = System.IO.Path.Combine(outDir, $"FS2020Controls_{device}_{friendlyName}.pdf");
@@ -147,7 +150,8 @@ namespace FS2020Control
       Color backColor = ColorConstants.WHITE;
       foreach (object? ct in it)
       {
-        if (ct is not FSControl ft) continue;
+        if (ct is not FSControl ft) 
+          continue;
         foreach (string c in showColumns)
         {
           var x = ft.GetType().GetProperty(c);
@@ -166,9 +170,14 @@ namespace FS2020Control
         backColor = backColor == ColorConstants.WHITE ?
           new DeviceRgb(gray, gray, gray) : ColorConstants.WHITE;
       }
-
-      document.Add(table);
-      document.Close();
+      try
+      {
+        document.Add(table);
+      }
+      finally 
+      {
+        document.Close();
+      }
       return outFile;
     }
 

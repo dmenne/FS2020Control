@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Globalization;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace FS2020Control
 {
@@ -21,14 +21,13 @@ namespace FS2020Control
       Console.WriteLine(json);
     }
   }
-
   internal class XmlToSqlite
 
   {
     public string? FS2020RootDir { get; private set; }
     public string? FS2020ContainerDir { get; private set; }
     public string[] XmlFiles { get; private set; } = default!;
-    public ControlContext? Context { get; }
+    internal ControlContext? Context { get; } = default!;
     public bool IsSteam { get; set; }
 
     public XmlToSqlite(ControlContext? ct = null)
@@ -51,7 +50,7 @@ namespace FS2020Control
         CheckSteamInstallation();
     }
 
-    private (string file, DateTime date)
+    private static (string file, DateTime date)
       GetLastFileWriteTime(string path, string pattern = "inputprofile_*")
     {
       var fs = Directory.EnumerateFiles(path, pattern);
@@ -66,13 +65,11 @@ namespace FS2020Control
 
     private void CheckSteamInstallation()
     {
-#pragma warning disable CA1416 
-      var steamPath =
+      string? steamPath =
          Registry.GetValue(@"HKEY_CURRENT_USER\Software\Valve\Steam", "SteamPath", null) as string;
-#pragma warning restore CA1416 
       if (steamPath == null || steamPath == "")
         return;
-      string appPath = $"{steamPath}\\userdata";
+      string appPath = $@"{steamPath}\userdata";
       // Assumption: 1250410 is FS2020 token
       // https://forums.flightsimulator.com/t/anyone-know-where-your-controller-config-is-stored-on-disk/241669/9
       var dirs = Directory.EnumerateDirectories(appPath, "*.*",
@@ -154,7 +151,7 @@ namespace FS2020Control
         Context.SaveChanges();
         Context.Database.ExecuteSql($"UPDATE sqlite_sequence SET seq = 0 WHERE name = 'FSControls'");
       }
-      if (FS2020ContainerDir == null)
+      if (FS2020ContainerDir == null || FS2020ContainerDir == "")
         return 0;
       string pattern = IsSteam ? "inputprofile_*" : "*.";
       List<string> xmlFiles =
@@ -209,12 +206,13 @@ namespace FS2020Control
 
     public static string? ToTitleCase(string str)
     {
-      return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str.ToLower());
+      return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(str.ToLower())
+        .Replace("_", " ");
     }
 
-    private int ImportXmlFile(string filePath)
+    public int ImportXmlFile(string filePath)
     {
-      string friendlyName;
+      string friendlyName;     
       XmlDocument doc = new XmlDocument();
       doc.LoadXml(MakeValidXml(filePath));
 
@@ -226,11 +224,10 @@ namespace FS2020Control
       XmlNode fNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/FriendlyName")) ??
         throw new FS2020Exception("No friendly name found in " + filePath);
       friendlyName = fNode.InnerText;
-
       XmlNodeList cNodes = (doc.DocumentElement?.SelectNodes("/FS2020/Device/Context")) ??
         throw new FS2020Exception("No ContextName found in " + filePath);
 
-      List<FSControl> fsControls = new List<FSControl>();      
+      List<FSControl> fsControls = new();      
       foreach (XmlNode? cnode in cNodes)
       {
         if (cnode == null) continue;
@@ -249,12 +246,13 @@ namespace FS2020Control
         FSControls = fsControls
       };
       Context.Add(fsControlFile);
-      return Context?.SaveChanges() ?? 0;
+      var ret = Context?.SaveChanges() ?? 0;
+      return ret;
     }
 
     private List<FSControl> SaveActions(string filePath, XmlNode cnode, string contextName)
     {
-      XmlNodeList nodes = (cnode.SelectNodes("//Action")) ??
+      XmlNodeList nodes = (cnode.SelectNodes("Action")) ??
         throw new FS2020Exception("No actions in " + filePath);
 
       var fsControls = new List<FSControl>();

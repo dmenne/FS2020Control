@@ -7,8 +7,8 @@
 Thanks to @pmb2019 for testing on the Steam platform.
 
 Getting an overview of the assigned keys for keyboard, mouse, flight stick in Microsoft 
-Flight Simulator 2020 is not easy. The local copies of the control settings are stored 
-in a file with a path like:
+Flight Simulator 2020 is not easy. For the installations from the Microsoft Store, 
+the local copies of the control settings can be found in a file with a path like:
 
     C:\Users\MyName\AppData\Local\Packages\
     Microsoft.FlightSimulator_8wekyb3d8bbwe\
@@ -17,10 +17,17 @@ in a file with a path like:
     9D40C7EC95724C16A62F4153D13B14B9\
     C6A6EACA3129423E8E4E42B33DE3BFCF
 
-*the above is ONE LINE*. 
+*the above is ONE LINE*
 
-Whenever changes are made in the control settings, the device's settings file is deleted and 
-replaced by another file with cryptic name.
+or, much simpler for Steam installations
+
+  C:\Program Files (x86)\Steam\userdata\123456789\1250410
+
+where 1250410 seems to be fixed, while the first numeric string is different in 
+all installations.
+
+Whenever changes are made in the control settings of FS2020, the device's settings file 
+is deleted and replaced by another file with cryptic name.
 
 In short: Microsoft does not want us to mess with it, and may change everything without notice.
 
@@ -45,8 +52,8 @@ Releases are on [flightsim.to](https://flightsim.to/d/dmenne/fs2020-control).
 
 ## Steam
 
-Steam installations are tricky, and I had to rely on @pmb2019 for debugging. I someone has both Store and 
-Steam, or swapped one for the other, nasty things might happen. Please report to github.
+Steam installations are tricky, and I had to rely on @pmb2019 for debugging. If someone has both Store and 
+Steam installation, or swapped one for the other, nasty things might happen. Please report to github.
 
 ## Main Window
 
@@ -78,7 +85,7 @@ Example file name:
 
 ![SQLite database for advanced users. The database is recreated on explicit 
 reload request, but not on restart of the program. It contains settings for all 
-control items, independent of the selection in the left grids.](png/FS2020SQLite.png)
+control items, independent of the selection.](png/FS2020SQLite.png)
 
 Example file name: 
 
@@ -99,8 +106,9 @@ Any changes using the external editor are at your own risk. Edits may or may not
 do what you expect, worst case scenario is that all settings for the device are lost, 
 so better work on a clone made in FS2020.
 
-Do not be surprised when you XML-editor claims that the file is not valid XML - 
+Do not be surprised when you XML-editor (recommended: NotePad++ with XML plugin) complains 
+that the file is not valid XML - 
 while the header insists that the content is XML, there is no root level element as 
 required by the norm. For internal processing, the app temporarily adds a root 
-level element - see function `MakeValidXml` in `XmlToSqlite.cs`.
+level element - see function [MakeValidHtml](https://github.com/dmenne/FS2020Control/blob/76a26385f2830040c2a71d4f0432f3f2f18848a5/FS2020Control/XmlToSqlite.cs#L147-L159) in file `XmlToSqlite`.
 

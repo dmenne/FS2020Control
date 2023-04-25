@@ -9,7 +9,11 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.IO;
 using MsgBoxEx;
+using static System.Net.WebRequestMethods;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
 
 // When the designer complaints or crashes, delete the bin folder and refresh
 // https://learn.microsoft.com/en-us/ef/core/get-started/wpf
@@ -46,14 +50,13 @@ namespace FS2020Control
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
-      Debug.WriteLine("Start");
       MessageBoxEx.SetFont("Arial", 15.0);
       LoadData();
     }
 
     private void LoadData()
     {
-     
+
       controlContext.Database.EnsureCreated();
       // Check if recent version
       try
@@ -85,6 +88,7 @@ namespace FS2020Control
       }
       SettingsLabel.Content = FromDatabase ? "From Database": (
         xh.IsSteam ? "Steam controls" : "Store controls");
+      UpdateSelectedContextBox();
       UpdateSelectedControlsBox();
     }
 
@@ -92,6 +96,7 @@ namespace FS2020Control
     {
       fsControlViewSource.SortDescriptions.Clear();
       fsControlViewSource.SortDescriptions.Add(new SortDescription("FriendlyAction", ListSortDirection.Ascending));
+      UpdateSelectedContextBox();
       UpdateSelectedControlsBox();
     }
 
@@ -107,21 +112,38 @@ namespace FS2020Control
         e.Accepted = !m.Success;
       }
       // When all or none are selected, use all
-      int selectedCount = SelectedControlsBox.SelectedItems.Count;
-      int itemsCount = SelectedControlsBox.Items.Count;
-      if (selectedCount == 0 || selectedCount == itemsCount)
+      int selectedControlsCount = SelectedControlsBox.SelectedItems.Count;
+      int selectedControlItemsCount = SelectedControlsBox.Items.Count;
+      int selectedContextCount = SelectedContextBox.SelectedItems.Count;
+      int selectedContextItemsCount = SelectedContextBox.Items.Count;
+      bool allControlsSelected = selectedControlsCount == 0 || selectedControlsCount == selectedControlItemsCount;
+      bool allContextsSelected = selectedContextCount == 0 || selectedContextCount == selectedContextItemsCount;
+      if ( allControlsSelected && allContextsSelected) 
         return;
-      bool accepted = false;
-      for (int i = 0; i < selectedCount; i++)
-      {
-        string selected = SelectedControlsBox.SelectedItems[i] as string ?? "";
-        if (selected == fsc.Actor)
+    
+      bool acceptedControls = allControlsSelected;
+      if (!allControlsSelected)
+        for (int i = 0; i < selectedControlsCount; i++)
         {
-          accepted = true;
-          break;
+          string selected = SelectedControlsBox.SelectedItems[i] as string ?? "";
+          if (selected == fsc.Actor)
+          {
+            acceptedControls = true;
+            break;
+          }
         }
-      }
-      e.Accepted = accepted;
+      bool acceptedContexts = allContextsSelected;
+      if (!acceptedContexts)  
+        for (int i = 0; i < selectedContextCount; i++)
+        {
+          string selected = SelectedContextBox.SelectedItems[i] as string ?? "";
+          if (selected == fsc.ContextName)
+          {
+            acceptedContexts = true;
+            break;
+          }
+        }
+      e.Accepted = acceptedContexts && acceptedControls;
     }
 
     private void Window_Closing(object sender, CancelEventArgs e)
@@ -134,8 +156,8 @@ namespace FS2020Control
       SelectedControlsBox.SelectedItems.Clear(); // Must be first
       SelectedControlsBox.Items.Clear();
       var da = DistinctActors();
-      for (int i = 0; i < da.Count; i++)
-        SelectedControlsBox.Items.Add(da[i]);
+      foreach (string v in da)
+        SelectedControlsBox.Items.Add(v);
     }
 
     private List<string?> DistinctActors()
@@ -158,13 +180,49 @@ namespace FS2020Control
         .ToList();
     }
 
+    private void UpdateSelectedContextBox()
+    {
+      SelectedContextBox.SelectedItems.Clear(); // Must be first
+      SelectedContextBox.Items.Clear();
+      var dc = DistinctContexts();
+      foreach (string v in dc)
+        SelectedContextBox.Items.Add(v);
+    }
+
+    private List<string> DistinctContexts()
+    {
+      var cgItems =
+       CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource);
+      if (cgItems == null)
+        return new List<string>();
+      IEnumerable<FSControl> cg = cgItems
+        .OfType<FSControl>();
+      bool hc = HideDebugCheck.IsChecked ?? false;
+      if (hc)
+        cg = cg
+          // TODO: or has debug
+          .Where(x => x.ContextName != "Debug");
+      return
+        cg
+        .Select(x => x.ContextName)
+        .Distinct()
+        .OrderBy(x => x)
+        .ToList();
+    }
+
     private void HideDebugCheck_Click(object sender, RoutedEventArgs e)
     {
       CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource).Refresh();
+      UpdateSelectedContextBox();
       UpdateSelectedControlsBox();
     }
 
     private void SelectedControlsBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+      CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource).Refresh();
+    }
+
+    private void SelectedContextBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource).Refresh();
     }
@@ -220,11 +278,13 @@ namespace FS2020Control
     {
       using (new WaitCursor())
       {
-        controlContext.FSControlsFile.RemoveRange(controlContext.FSControlsFile);
-        controlContext.SaveChanges();
+        controlContext.ChangeTracker.Clear();
+        controlContext.FSControlsFile.ExecuteDelete();
+        controlContext.ChangeTracker.Clear();
         LoadData();
       }
     }
+
   }
 
   public class WaitCursor : IDisposable
