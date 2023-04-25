@@ -221,11 +221,29 @@ namespace FS2020Control
         throw new FS2020Exception("No Device " + filePath);
       string deviceName = dNode.Attributes?["DeviceName"]?.Value ??
         throw new FS2020Exception("No Device Name" + filePath);
-      XmlNodeList nodes = (doc.DocumentElement?.SelectNodes("//Action")) ??
-        throw new FS2020Exception("No actions in " + filePath);
+
       XmlNode fNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/FriendlyName")) ??
         throw new FS2020Exception("No friendly name found in " + filePath);
       friendlyName = fNode.InnerText;
+
+      List<FSControl> fsControls = SaveActions(filePath, doc);
+      if (Context == null) return 0;
+      var fsControlFile = new FSControlFile
+      {
+        Device = deviceName,
+        FriendlyName = friendlyName,
+        FileName = filePath,
+        FSControls = fsControls
+      };
+      Context.Add(fsControlFile);
+      return Context?.SaveChanges() ?? 0;
+    }
+
+    private List<FSControl> SaveActions(string filePath, XmlDocument doc)
+    {
+      XmlNodeList nodes = (doc.DocumentElement?.SelectNodes("//Action")) ??
+        throw new FS2020Exception("No actions in " + filePath);
+
       var fsControls = new List<FSControl>();
       foreach (XmlNode? xnode in nodes)
       {
@@ -270,16 +288,8 @@ namespace FS2020Control
           ctl.Dump();
         fsControls.Add(ctl);
       }
-      if (Context == null) return 0;
-      var fsControlFile = new FSControlFile
-      {
-        Device = deviceName,
-        FriendlyName = friendlyName,
-        FileName = filePath,
-        FSControls = fsControls
-      };
-      Context.Add(fsControlFile);
-      return Context?.SaveChanges() ?? 0;
+
+      return fsControls;
     }
   }
 
