@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Nullable>enable</Nullable>
     <PublishSingleFile>true</PublishSingleFile>
@@ -24,47 +23,38 @@
     <ApplicationIcon>fs2020.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>7</WarningLevel>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>7</WarningLevel>
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
-
   <ItemGroup>
     <None Remove="fs2020.png" />
     <None Remove="release.ps1" />
   </ItemGroup>
-
   <ItemGroup>
     <Content Include="fs2020.ico" />
   </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.101.0" />
     <PackageReference Include="itext7" Version="7.2.5" />
     <PackageReference Include="Jot" Version="2.1.13" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\WpfMessageBoxEx\WpfMessageBoxEx.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <Resource Include="fs2020.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </Resource>
   </ItemGroup>
-
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -72,7 +62,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -83,5 +72,4 @@
       <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
-
 </Project>
