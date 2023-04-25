@@ -3,6 +3,7 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -226,7 +227,19 @@ namespace FS2020Control
         throw new FS2020Exception("No friendly name found in " + filePath);
       friendlyName = fNode.InnerText;
 
-      List<FSControl> fsControls = SaveActions(filePath, doc);
+      XmlNodeList cNodes = (doc.DocumentElement?.SelectNodes("/FS2020/Device/Context")) ??
+        throw new FS2020Exception("No ContextName found in " + filePath);
+
+      List<FSControl> fsControls = new List<FSControl>();      
+      foreach (XmlNode? cnode in cNodes)
+      {
+        if (cnode == null) continue;
+        string contextName = cnode.Attributes?["ContextName"]?.Value ?? "";
+        contextName = ToTitleCase(contextName) ?? "";
+        List<FSControl> fsControlsContext = SaveActions(filePath, cnode, contextName);
+        fsControls = fsControls.Concat(fsControlsContext).ToList();
+      }
+
       if (Context == null) return 0;
       var fsControlFile = new FSControlFile
       {
@@ -239,9 +252,9 @@ namespace FS2020Control
       return Context?.SaveChanges() ?? 0;
     }
 
-    private List<FSControl> SaveActions(string filePath, XmlDocument doc)
+    private List<FSControl> SaveActions(string filePath, XmlNode cnode, string contextName)
     {
-      XmlNodeList nodes = (doc.DocumentElement?.SelectNodes("//Action")) ??
+      XmlNodeList nodes = (cnode.SelectNodes("//Action")) ??
         throw new FS2020Exception("No actions in " + filePath);
 
       var fsControls = new List<FSControl>();
@@ -283,7 +296,7 @@ namespace FS2020Control
         ctl.PrimaryKeysCode = primaryKeysCode;
         ctl.SecondaryKeys = secondaryKeys;
         ctl.SecondaryKeysCode = secondaryKeysCode;
-        ctl.ContextName = "Context";
+        ctl.ContextName = contextName;
         if (Context == null)
           ctl.Dump();
         fsControls.Add(ctl);

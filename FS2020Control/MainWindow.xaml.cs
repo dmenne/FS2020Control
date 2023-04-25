@@ -10,7 +10,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using MsgBoxEx;
-using System.Windows.Interop;
 
 // When the designer complaints or crashes, delete the bin folder and refresh
 // https://learn.microsoft.com/en-us/ef/core/get-started/wpf
@@ -47,6 +46,7 @@ namespace FS2020Control
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+      Debug.WriteLine("Start");
       MessageBoxEx.SetFont("Arial", 15.0);
       LoadData();
     }
