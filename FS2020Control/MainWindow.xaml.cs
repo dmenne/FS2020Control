@@ -53,7 +53,17 @@ namespace FS2020Control
 
     private void LoadData()
     {
+     
       controlContext.Database.EnsureCreated();
+      // Check if recent version
+      try
+      {
+        var x = controlContext.FSControls.ToList();
+      }
+      catch {
+        controlContext.Database.EnsureDeleted();
+        controlContext.Database.EnsureCreated();
+      }
       var xh = new XmlToSqlite(controlContext);
       try
       {

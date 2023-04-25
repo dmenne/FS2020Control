@@ -1,5 +1,4 @@
-﻿using iText.Kernel.Colors;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
-using static iText.Kernel.Pdf.Colorspace.PdfSpecialCs;
 
 namespace FS2020Control
 {
@@ -267,6 +265,7 @@ namespace FS2020Control
         ctl.PrimaryKeysCode = primaryKeysCode;
         ctl.SecondaryKeys = secondaryKeys;
         ctl.SecondaryKeysCode = secondaryKeysCode;
+        ctl.ContextName = "Context";
         if (Context == null)
           ctl.Dump();
         fsControls.Add(ctl);

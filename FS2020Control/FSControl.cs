@@ -25,6 +25,7 @@ namespace FS2020Control
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]
     public int FSControlId { get; set; } = default!;
+    public string ContextName { get; set; } = default!;
     public string ActionName { get; set; } = default!;
     public string? Actor { get; set; } = default!;
     public string? FriendlyAction { get; set; } = default!;
