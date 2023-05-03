@@ -21,10 +21,10 @@ the local copies of the control settings can be found in a file with a path like
 
 or, much simpler for Steam installations
 
-  C:\Program Files (x86)\Steam\userdata\123456789\1250410
+    C:\Program Files (x86)\Steam\userdata\123456789\1250410
 
-where 1250410 seems to be fixed, while the first numeric string is different in 
-all installations.
+where `1250410` seems to be fixed, while the first numeric string is different in 
+all installations. See also [this thread](https://forums.flightsimulator.com/t/where-can-i-save-the-control-profile-settings-file/347750/2).
 
 Whenever changes are made in the control settings of FS2020, the device's settings file 
 is deleted and replaced by another file with cryptic name.
