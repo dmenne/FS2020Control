@@ -92,7 +92,7 @@ namespace FS2020Control
       UpdateSelectedControlsBox();
     }
 
-    private void FSControlFileGrid_SelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+    private void FSControlFileGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
       fsControlViewSource.SortDescriptions.Clear();
       fsControlViewSource.SortDescriptions.Add(new SortDescription("FriendlyAction", ListSortDirection.Ascending));
@@ -285,7 +285,7 @@ namespace FS2020Control
       }
     }
 
-  }
+    }
 
   public class WaitCursor : IDisposable
   {

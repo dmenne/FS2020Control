@@ -13,14 +13,6 @@ using System.Linq;
 
 namespace FS2020Control
 {
-  static class ObjectHelper
-  {
-    public static void Dump<T>(this T x)
-    {
-      string json = JsonSerializer.Serialize(x);
-      Console.WriteLine(json);
-    }
-  }
   internal class XmlToSqlite
 
   {
@@ -40,7 +32,7 @@ namespace FS2020Control
     public void CheckInstallations()
     {
 #if DEBUG
-      bool forceSteam = true; //Debug 
+      bool forceSteam = false; //Debug 
 #else
       bool forceSteam = false; // Always check for Store first
 #endif
@@ -295,8 +287,6 @@ namespace FS2020Control
         ctl.SecondaryKeys = secondaryKeys;
         ctl.SecondaryKeysCode = secondaryKeysCode;
         ctl.ContextName = contextName;
-        if (Context == null)
-          ctl.Dump();
         fsControls.Add(ctl);
       }
 

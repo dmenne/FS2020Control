@@ -1,5 +1,6 @@
 ﻿//Imports
 using ClosedXML.Excel;
+using DocumentFormat.OpenXml.Office2021.MipLabelMetaData;
 using iText.Kernel.Colors;
 using iText.Kernel.Events;
 using iText.Kernel.Geom;
@@ -115,6 +116,8 @@ namespace FS2020Control
     {
       string[] showColumns =
         { "ContextName", "Actor", "FriendlyAction", "PrimaryKeys", "SecondaryKeys" };
+      string[] showColumnLabels =
+        { "Context", "Actor", "Action", "Primary", "Secondary" };
 
       if (it.Count == 0) return "";
       iLayout.Document document;
@@ -133,11 +136,11 @@ namespace FS2020Control
           $"File {outFile} cannot be written - do you have it open in a viewer?");
       }
 
-      Table table = new(showColumns.Length);
-      foreach (string c in showColumns)
+      Table table = new(showColumns.Length, true);
+      foreach (string cLabel in showColumnLabels) 
       {
         Cell cell = new Cell()
-          .Add(new Paragraph(c)
+          .Add(new Paragraph(cLabel)
           .SetBackgroundColor(ColorConstants.LIGHT_GRAY)
           .SetTextAlignment(TextAlignment.LEFT))
           .SetFontSize(fontSize)
@@ -172,6 +175,9 @@ namespace FS2020Control
       }
       try
       {
+        // https://stackoverflow.com/questions/64147520/null-reference-exception-when-calling-itext7-pdfacroform-getacroform-in-net-c
+        // This exception might turn up when "Enable Just My Code" is not checked in
+        // debugging actions.
         document.Add(table);
       }
       finally 

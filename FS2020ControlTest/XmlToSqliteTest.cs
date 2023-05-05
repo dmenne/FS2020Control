@@ -12,7 +12,7 @@ namespace FS2020ControlTest
     // There is no simple method to find out if FS is installed
     // Even ChatGPT returns unusable code
     // Gave up, set it manually
-    private bool NoFS = false; 
+    private readonly bool NoFS = false; 
 
     [TestMethod]
     public void PathToFSMustExist() {
@@ -50,42 +50,38 @@ namespace FS2020ControlTest
     public void UseDatabaseWhenDataAreAvailableOneFile()
     {
       // This test works without FS installed
-      using (var ct = new ControlContext(test: true))
-      {
-        Assert.IsNotNull(ct);
-        ct.Database.EnsureDeleted();
-        ct.Database.EnsureCreated();
-        Assert.IsFalse(ct.HasData);
+      using var ct = new ControlContext(test: true);
+      Assert.IsNotNull(ct);
+      ct.Database.EnsureDeleted();
+      ct.Database.EnsureCreated();
+      Assert.IsFalse(ct.HasData);
 
-        var xh = new XmlToSqlite(ct);
-        xh.CheckInstallations();
-        string big_store = "../../../testdata/big_store.xml";
-        Assert.IsTrue(File.Exists(big_store));
-        int x = xh.ImportXmlFile(big_store);
-        Assert.IsTrue(x > 0);
-      }
+      var xh = new XmlToSqlite(ct);
+      xh.CheckInstallations();
+      string big_store = "../../../testdata/big_store.xml";
+      Assert.IsTrue(File.Exists(big_store));
+      int x = xh.ImportXmlFile(big_store);
+      Assert.IsTrue(x > 0);
     }
 
     [TestMethod]
     public void UseDatabaseWhenDataAreAvailableAllFiles()
     {
       if (NoFS) return;
-      using (var ct = new ControlContext(test: true))
-      {
-        Assert.IsNotNull(ct);
-        ct.Database.EnsureDeleted();
-        ct.Database.EnsureCreated();
-        Assert.IsFalse(ct.HasData);
+      using var ct = new ControlContext(test: true);
+      Assert.IsNotNull(ct);
+      ct.Database.EnsureDeleted();
+      ct.Database.EnsureCreated();
+      Assert.IsFalse(ct.HasData);
 
-        var xh = new XmlToSqlite(ct);
-        xh.CheckInstallations();
-        xh.ImportXmlFiles();
+      var xh = new XmlToSqlite(ct);
+      xh.CheckInstallations();
+      xh.ImportXmlFiles();
 
-        int? keys = xh.Context?.FSControls.Count();
-        Assert.IsTrue(ct.HasData);
-        Assert.IsNotNull(keys);
-        Assert.IsTrue(keys > 1000);
-      }
+      int? keys = xh.Context?.FSControls.Count();
+      Assert.IsTrue(ct.HasData);
+      Assert.IsNotNull(keys);
+      Assert.IsTrue(keys > 1000);
     }
   }
 }

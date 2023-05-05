@@ -35,26 +35,23 @@
       </Menu>
       <StackPanel>
         <Label Content="Click on header to sort" Background="#FFC0D8FA"/>
-        <DataGrid x:Name="FSControlFileGrid"
+        <ListView x:Name="FSControlFileGrid"
               SelectionMode="Single"
               DockPanel.Dock="Top"
               VerticalAlignment="Top"
               Grid.Column="0"
               MaxHeight="800"
-              EnableRowVirtualization="False"
               ItemsSource="{Binding Source={StaticResource fsControlFileViewSource}}" 
               ScrollViewer.CanContentScroll="True" 
-              ScrollViewer.VerticalScrollBarVisibility="Auto"
-              RowDetailsVisibilityMode="VisibleWhenSelected"
-              AutoGenerateColumns="false" 
-              SelectedCellsChanged="FSControlFileGrid_SelectedCellsChanged" 
-              PreviewMouseDoubleClick="FSControlFileGrid_PreviewMouseDoubleClick">
-          <DataGrid.Columns>
-            <DataGridTextColumn Header="Device" Binding="{Binding Device}" IsReadOnly="True"
-                            Width="auto"/>
-            <DataGridTextColumn Header="Name" Binding="{Binding FriendlyName}" Width="auto"/>
-          </DataGrid.Columns>
-        </DataGrid>
+              ScrollViewer.VerticalScrollBarVisibility="Auto" 
+              PreviewMouseDoubleClick="FSControlFileGrid_PreviewMouseDoubleClick" SelectionChanged="FSControlFileGrid_SelectionChanged">
+          <ListView.View>
+            <GridView>
+            <GridViewColumn Header="Device" DisplayMemberBinding="{Binding Device}" Width="auto"/>
+              <GridViewColumn Header="Name" DisplayMemberBinding="{Binding FriendlyName}" Width="auto"/>
+            </GridView>
+          </ListView.View>
+        </ListView>
       </StackPanel>
       <StackPanel>
         <Label Content="Select one or multiple contexts (none=all)" IsEnabled="False" Background="#FF97C6FE" />
