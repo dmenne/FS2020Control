@@ -195,7 +195,7 @@ namespace MsgBoxEx
 			MessageBoxButtonDefault buttonDefault = MessageBoxButtonDefault.Forms;
 			foreach (object item in args)
 			{
-				if (item is string                  ttl && !string.IsNullOrEmpty(title)                  ) { title         = ttl; }
+				if (item is string                  ttl && string.IsNullOrEmpty(title))	{ title = ttl; }
 				if (item is MessageBoxButton        btn && buttons       == MessageBoxButton.OK          ) { buttons       = btn; }
 				if (item is MessageBoxImage         img && image         == MessageBoxImage.None         ) { image         = img; }
 				if (item is MessageBoxButtonDefault def && buttonDefault == MessageBoxButtonDefault.Forms) { buttonDefault = def; }

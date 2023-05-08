@@ -13,6 +13,7 @@ using System.IO;
 using MsgBoxEx;
 using static System.Net.WebRequestMethods;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using DocumentFormat.OpenXml.Spreadsheet;
 
 
 // When the designer complaints or crashes, delete the bin folder and refresh
@@ -30,6 +31,9 @@ namespace FS2020Control
     private readonly CollectionViewSource fsControlViewSource = default!;
     MessageBoxResult? MessageBoxRes = null;
     private bool FromDatabase { get; set; }
+    // https://learn.microsoft.com/en-us/dotnet/desktop/wpf/controls/how-to-sort-a-gridview-column-when-a-header-is-clicked
+    GridViewColumnHeader _lastHeaderClicked = null;
+    ListSortDirection _lastDirection = ListSortDirection.Ascending;
 
     public MainWindow()
     {
@@ -63,7 +67,8 @@ namespace FS2020Control
       {
         var x = controlContext.FSControls.ToList();
       }
-      catch {
+      catch
+      {
         controlContext.Database.EnsureDeleted();
         controlContext.Database.EnsureCreated();
       }
@@ -86,8 +91,10 @@ namespace FS2020Control
         // https://www.codeproject.com/Articles/5290638/Customizable-WPF-MessageBox
         MessageBoxEx.Show(ex.Message, "FS2020 Controls");
       }
-      SettingsLabel.Content = FromDatabase ? "From Database": (
+      SettingsLabel.Content = FromDatabase ? "From Database" : (
         xh.IsSteam ? "Steam controls" : "Store controls");
+      CollectionView? view = (CollectionView)CollectionViewSource.GetDefaultView(fsControlFileViewSource);
+      view?.SortDescriptions.Add(new SortDescription("Device", ListSortDirection.Ascending));
       UpdateSelectedContextBox();
       UpdateSelectedControlsBox();
     }
@@ -118,9 +125,9 @@ namespace FS2020Control
       int selectedContextItemsCount = SelectedContextBox.Items.Count;
       bool allControlsSelected = selectedControlsCount == 0 || selectedControlsCount == selectedControlItemsCount;
       bool allContextsSelected = selectedContextCount == 0 || selectedContextCount == selectedContextItemsCount;
-      if ( allControlsSelected && allContextsSelected) 
+      if (allControlsSelected && allContextsSelected)
         return;
-    
+
       bool acceptedControls = allControlsSelected;
       if (!allControlsSelected)
         for (int i = 0; i < selectedControlsCount; i++)
@@ -133,7 +140,7 @@ namespace FS2020Control
           }
         }
       bool acceptedContexts = allContextsSelected;
-      if (!acceptedContexts)  
+      if (!acceptedContexts)
         for (int i = 0; i < selectedContextCount; i++)
         {
           string selected = SelectedContextBox.SelectedItems[i] as string ?? "";
@@ -227,17 +234,23 @@ namespace FS2020Control
       CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource).Refresh();
     }
 
-    private void FSControlFileGrid_PreviewMouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+    private void FSControlFileGrid_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
       if (FSControlFileGrid.SelectedItem is not FSControlFile ct) return;
+      if (!System.IO.File.Exists(ct.FileName))
+      {
+        MessageBoxEx.Show("This file was deleted by FS2020; press reload to synchronize");
+        return;
+
+      }
       MessageBoxRes ??= MessageBoxEx.Show(
-          "This message will be shown only once per session.\n" +
           "When you select <Yes>, the file will be opened with Notepad.\n" +
-          "When you select <No>, the full path to the settings will be copied to the clipboard.\n" +
+          "When you select <No>, the full path to the settings will be copied to the clipboard.\n\n" +
           "Any changes to the file are at your own risk.\n" +
-          "The file will be deleted and replaced with a new one when\n" +
-          "you make changes in the control settings of FS2020.",
-          "Open FS2020 Settings File",
+          "The file will be deleted and replaced with a new one by FS2020\n" +
+          "when you make changes in the control settings.\n\n" +
+          "This message is shown only once per session.",
+          "Open FS2020 Settings File - Shown only once per session",
           MessageBoxButton.YesNoCancel,
           MessageBoxImage.Question,
           MessageBoxResult.Yes
@@ -285,26 +298,92 @@ namespace FS2020Control
       }
     }
 
-    }
 
-  public class WaitCursor : IDisposable
-  {
-    private Cursor _previousCursor;
-
-    public WaitCursor()
+    void FSControlFile_GridViewColumnHeaderClick(object sender,
+                                               RoutedEventArgs e)
     {
-      _previousCursor = Mouse.OverrideCursor;
+      GridViewColumnHeader? headerClicked = e.OriginalSource as GridViewColumnHeader;
+      ListSortDirection direction;
 
-      Mouse.OverrideCursor = Cursors.Wait;
+      if (headerClicked != null)
+      {
+        if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+        {
+          if (headerClicked != _lastHeaderClicked)
+          {
+            direction = ListSortDirection.Ascending;
+          }
+          else
+          {
+            if (_lastDirection == ListSortDirection.Ascending)
+            {
+              direction = ListSortDirection.Descending;
+            }
+            else
+            {
+              direction = ListSortDirection.Ascending;
+            }
+          }
+
+          var columnBinding = headerClicked.Column.DisplayMemberBinding as Binding;
+          string? sortBy = columnBinding?.Path.Path ?? headerClicked.Column.Header as string;
+
+          if (sortBy != null)
+            Sort(sortBy, direction);
+
+          if (direction == ListSortDirection.Ascending)
+          {
+            headerClicked.Column.HeaderTemplate =
+              Resources["HeaderTemplateArrowUp"] as DataTemplate;
+          }
+          else
+          {
+            headerClicked.Column.HeaderTemplate =
+              Resources["HeaderTemplateArrowDown"] as DataTemplate;
+          }
+
+          // Remove arrow from previously sorted header
+          if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
+          {
+            _lastHeaderClicked.Column.HeaderTemplate = null;
+          }
+
+          _lastHeaderClicked = headerClicked;
+          _lastDirection = direction;
+        }
+      }
     }
 
-    #region IDisposable Members
-
-    public void Dispose()
+    private void Sort(string sortBy, ListSortDirection direction)
     {
-      Mouse.OverrideCursor = _previousCursor;
+      ICollectionView dataView =
+        CollectionViewSource.GetDefaultView(FSControlFileGrid.ItemsSource);
+
+      dataView.SortDescriptions.Clear();
+      SortDescription sd = new(sortBy, direction);
+      dataView.SortDescriptions.Add(sd);
+      dataView.Refresh();
     }
 
-    #endregion
+    public class WaitCursor : IDisposable
+    {
+      private Cursor _previousCursor;
+
+      public WaitCursor()
+      {
+        _previousCursor = Mouse.OverrideCursor;
+
+        Mouse.OverrideCursor = Cursors.Wait;
+      }
+
+      #region IDisposable Members
+
+      public void Dispose()
+      {
+        Mouse.OverrideCursor = _previousCursor;
+      }
+
+      #endregion
+    }
   }
 }

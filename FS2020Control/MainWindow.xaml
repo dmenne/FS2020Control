@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:msgboxex="clr-namespace:MsgBoxEx;assembly=WpfMessageBoxEx" d:DataContext="{d:DesignInstance Type=msgboxex:MsgBoxExCheckBoxData}"
         mc:Ignorable="d"
         Title="FS2020 Controls" Height="734" Loaded="Window_Loaded"
         MaxHeight="1000"
@@ -44,10 +45,12 @@
               ItemsSource="{Binding Source={StaticResource fsControlFileViewSource}}" 
               ScrollViewer.CanContentScroll="True" 
               ScrollViewer.VerticalScrollBarVisibility="Auto" 
-              PreviewMouseDoubleClick="FSControlFileGrid_PreviewMouseDoubleClick" SelectionChanged="FSControlFileGrid_SelectionChanged">
+              GridViewColumnHeader.Click ="FSControlFile_GridViewColumnHeaderClick"
+              PreviewMouseDoubleClick="FSControlFileGrid_PreviewMouseDoubleClick" 
+              SelectionChanged="FSControlFileGrid_SelectionChanged">
           <ListView.View>
             <GridView>
-            <GridViewColumn Header="Device" DisplayMemberBinding="{Binding Device}" Width="auto"/>
+              <GridViewColumn Header="Device" DisplayMemberBinding="{Binding Device}" Width="auto"/>
               <GridViewColumn Header="Name" DisplayMemberBinding="{Binding FriendlyName}" Width="auto"/>
             </GridView>
           </ListView.View>
