@@ -1,6 +1,5 @@
 ﻿//Imports
 using ClosedXML.Excel;
-using DocumentFormat.OpenXml.Office2021.MipLabelMetaData;
 using iText.Kernel.Colors;
 using iText.Kernel.Events;
 using iText.Kernel.Geom;

@@ -30,7 +30,7 @@
                   IsChecked="True"
                   DockPanel.Dock="Top" 
                   Label="Hide Debug" Click="HideDebugCheck_Click"/>
-        <Label x:Name="SettingsLabel" Background="Bisque" BorderThickness="2" BorderBrush="Black">
+        <Label x:Name="SettingsLabel" Background="Bisque" BorderBrush="Black">
           No settings
         </Label>
       </Menu>

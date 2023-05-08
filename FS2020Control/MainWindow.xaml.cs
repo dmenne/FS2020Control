@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// #define TEST_RELOAD // Will rename a file every 9 seconds to test reload information
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,11 +10,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.IO;
 using MsgBoxEx;
-using static System.Net.WebRequestMethods;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using DocumentFormat.OpenXml.Spreadsheet;
+using System.Windows.Media;
 
 
 // When the designer complaints or crashes, delete the bin folder and refresh
@@ -29,11 +27,17 @@ namespace FS2020Control
     private readonly ControlContext controlContext = new(test: false);
     private readonly CollectionViewSource fsControlFileViewSource = default!;
     private readonly CollectionViewSource fsControlViewSource = default!;
-    MessageBoxResult? MessageBoxRes = null;
+    private MessageBoxResult? MessageBoxRes = null;
+    private string lastSettingsLabel = "";
+    private readonly System.Windows.Threading.DispatcherTimer CheckFilesTimer = new ();
+
     private bool FromDatabase { get; set; }
     // https://learn.microsoft.com/en-us/dotnet/desktop/wpf/controls/how-to-sort-a-gridview-column-when-a-header-is-clicked
-    GridViewColumnHeader _lastHeaderClicked = null;
-    ListSortDirection _lastDirection = ListSortDirection.Ascending;
+    GridViewColumnHeader lastHeaderClicked = null;
+    ListSortDirection lastDirection = ListSortDirection.Ascending;
+#if TEST_RELOAD && DEBUG
+    int checkFilesCount = 0;
+#endif
 
     public MainWindow()
     {
@@ -54,8 +58,45 @@ namespace FS2020Control
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
+      const int checkFilesSeconds = 2;
       MessageBoxEx.SetFont("Arial", 15.0);
       LoadData();
+      
+      CheckFilesTimer.Tick += new EventHandler(CheckFilesTimer_Tick!);
+      CheckFilesTimer.Interval = new TimeSpan(0, 0, checkFilesSeconds);
+      CheckFilesTimer.Start();
+    }
+
+
+    private void CheckFilesTimer_Tick(object sender, EventArgs e)
+    {
+#if TEST_RELOAD && DEBUG
+      checkFilesCount++;
+      if (checkFilesCount % 3 == 0) {
+        string? file = controlContext.FSControlsFile.Local
+          .Select(fn => fn.FileName)
+          .FirstOrDefault();
+        if (file != null && System.IO.File.Exists(file))
+        {
+          System.IO.File.Move(file, file + "X");
+          Console.WriteLine("Renamed File " + checkFilesCount);
+        }
+      }
+#endif
+      bool cf = controlContext.FSControlsFile.Local
+        .Select(fn => fn.FileName)
+        .Any(fn => !System.IO.File.Exists(fn));
+      Brush? bisque = new BrushConverter().ConvertFromString("Bisque") as Brush;
+      if (!cf)
+      {
+        SettingsLabel.Background = bisque;
+        SettingsLabel.Content = lastSettingsLabel;
+        return;
+      }
+
+      Brush? orange = new BrushConverter().ConvertFromString("Orange") as Brush;
+      SettingsLabel.Content = "Reload!";
+      SettingsLabel.Background = SettingsLabel.Background == bisque ? orange : bisque;
     }
 
     private void LoadData()
@@ -91,9 +132,10 @@ namespace FS2020Control
         // https://www.codeproject.com/Articles/5290638/Customizable-WPF-MessageBox
         MessageBoxEx.Show(ex.Message, "FS2020 Controls");
       }
-      SettingsLabel.Content = FromDatabase ? "From Database" : (
-        xh.IsSteam ? "Steam controls" : "Store controls");
-      CollectionView? view = (CollectionView)CollectionViewSource.GetDefaultView(fsControlFileViewSource);
+      lastSettingsLabel =  FromDatabase ? "From Database" : (
+        xh.IsSteam ? "From Steam" : "From Store");
+      SettingsLabel.Content = lastSettingsLabel;
+      CollectionView ? view = (CollectionView)CollectionViewSource.GetDefaultView(fsControlFileViewSource);
       view?.SortDescriptions.Add(new SortDescription("Device", ListSortDirection.Ascending));
       UpdateSelectedContextBox();
       UpdateSelectedControlsBox();
@@ -243,6 +285,9 @@ namespace FS2020Control
         return;
 
       }
+
+
+      // Once MessageBoxRes is not null, it will not be show of later calls
       MessageBoxRes ??= MessageBoxEx.Show(
           "When you select <Yes>, the file will be opened with Notepad.\n" +
           "When you select <No>, the full path to the settings will be copied to the clipboard.\n\n" +
@@ -262,6 +307,8 @@ namespace FS2020Control
           break;
         case MessageBoxResult.No:
           Clipboard.SetText(ct.FileName);
+          MessageBoxEx.Show($"Copied to clipboard:\n{ct.FileName}", "FS2020Control",
+            MessageBoxImage.Information);
           break;
       }
 
@@ -305,53 +352,49 @@ namespace FS2020Control
       GridViewColumnHeader? headerClicked = e.OriginalSource as GridViewColumnHeader;
       ListSortDirection direction;
 
-      if (headerClicked != null)
+      if (headerClicked == null) return;
+      if (headerClicked.Role == GridViewColumnHeaderRole.Padding) return;
+      if (headerClicked != lastHeaderClicked)
       {
-        if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+        direction = ListSortDirection.Ascending;
+      }
+      else
+      {
+        if (lastDirection == ListSortDirection.Ascending)
         {
-          if (headerClicked != _lastHeaderClicked)
-          {
-            direction = ListSortDirection.Ascending;
-          }
-          else
-          {
-            if (_lastDirection == ListSortDirection.Ascending)
-            {
-              direction = ListSortDirection.Descending;
-            }
-            else
-            {
-              direction = ListSortDirection.Ascending;
-            }
-          }
-
-          var columnBinding = headerClicked.Column.DisplayMemberBinding as Binding;
-          string? sortBy = columnBinding?.Path.Path ?? headerClicked.Column.Header as string;
-
-          if (sortBy != null)
-            Sort(sortBy, direction);
-
-          if (direction == ListSortDirection.Ascending)
-          {
-            headerClicked.Column.HeaderTemplate =
-              Resources["HeaderTemplateArrowUp"] as DataTemplate;
-          }
-          else
-          {
-            headerClicked.Column.HeaderTemplate =
-              Resources["HeaderTemplateArrowDown"] as DataTemplate;
-          }
-
-          // Remove arrow from previously sorted header
-          if (_lastHeaderClicked != null && _lastHeaderClicked != headerClicked)
-          {
-            _lastHeaderClicked.Column.HeaderTemplate = null;
-          }
-
-          _lastHeaderClicked = headerClicked;
-          _lastDirection = direction;
+          direction = ListSortDirection.Descending;
+        }
+        else
+        {
+          direction = ListSortDirection.Ascending;
         }
       }
+
+      var columnBinding = headerClicked.Column.DisplayMemberBinding as Binding;
+      string? sortBy = columnBinding?.Path.Path ?? headerClicked.Column.Header as string;
+
+      if (sortBy != null)
+        Sort(sortBy, direction);
+
+      if (direction == ListSortDirection.Ascending)
+      {
+        headerClicked.Column.HeaderTemplate =
+          Resources["HeaderTemplateArrowUp"] as DataTemplate;
+      }
+      else
+      {
+        headerClicked.Column.HeaderTemplate =
+          Resources["HeaderTemplateArrowDown"] as DataTemplate;
+      }
+
+      // Remove arrow from previously sorted header
+      if (lastHeaderClicked != null && lastHeaderClicked != headerClicked)
+      {
+        lastHeaderClicked.Column.HeaderTemplate = null;
+      }
+
+      lastHeaderClicked = headerClicked;
+      lastDirection = direction;
     }
 
     private void Sort(string sortBy, ListSortDirection direction)
