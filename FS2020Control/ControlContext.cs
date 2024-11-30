@@ -8,7 +8,7 @@ namespace FS2020Control
 {
   // https://learn.microsoft.com/de-de/ef/core/get-started/overview/first-app?tabs=netcore-cli
 
-  internal class ControlContext : DbContext
+  public class ControlContext : DbContext
   {
     public string DbPath { get; }
     public string DbDir { get; }
@@ -52,7 +52,7 @@ namespace FS2020Control
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
       optionsBuilder.UseSqlite($"Data Source={DbPath}");
-      optionsBuilder.UseLazyLoadingProxies();
+//   *******   optionsBuilder.UseLazyLoadingProxies();
     }
 
 

@@ -1,7 +1,7 @@
 ﻿//Imports
 using ClosedXML.Excel;
 using iText.Kernel.Colors;
-using iText.Kernel.Events;
+using iText.Commons.Actions;
 using iText.Kernel.Geom;
 using iText.Kernel.Pdf;
 using iText.Kernel.Pdf.Canvas;
@@ -14,6 +14,7 @@ using System.IO;
 using System.Windows.Controls;
 using iBorders = iText.Layout.Borders;
 using iLayout = iText.Layout;
+using iText.Kernel.Pdf.Event;
 
 namespace FS2020Control
 {
@@ -26,7 +27,7 @@ namespace FS2020Control
       this.title = title;
     }
 
-    public virtual void HandleEvent(Event evt)
+    public virtual void OnEvent(IEvent evt)
     {
       PdfDocumentEvent docEvent = (PdfDocumentEvent)evt;
       PdfDocument pdfDoc = docEvent.GetDocument();
@@ -36,7 +37,7 @@ namespace FS2020Control
       PdfCanvas pdfCanvas = new(page.NewContentStreamBefore(), page.GetResources(), pdfDoc);
 
       // Add watermark
-      iLayout.Canvas canvas = new iLayout.Canvas(pdfCanvas, pageSize);
+      iLayout.Canvas canvas = new(pdfCanvas, pageSize);
       canvas.SetFontColor(ColorConstants.BLUE);
       canvas.SetFontSize(25);
       // Strange: Documentation says this should be angle in degree
@@ -126,7 +127,7 @@ namespace FS2020Control
         PdfWriter writer = new(outFile);
         PdfDocument pdf = new(writer);
         string title = $"{device} {friendlyName}";
-        pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new TopEventHandler(title));
+// *****        pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new TopEventHandler(title));
         document = new(pdf);
       }
       catch (IOException)

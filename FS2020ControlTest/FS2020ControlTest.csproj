@@ -1,20 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-
     <PlatformTarget>x64</PlatformTarget>
+    <IsTestProject>true</IsTestProject>
 
     <AssemblyVersion>1.2.1</AssemblyVersion>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DefineConstants>$(DefineConstants);TEST</DefineConstants>
-    <NoWarn>NU1701;NU1702</NoWarn>
+    <NoWarn>NU1701;NU1702;NU1003;NU1902</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,25 +22,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="hello1.db" />
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+    <PackageReference Include="itext" Version="9.0.0" />
+    <PackageReference Include="Jot" Version="2.1.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="MSTest.TestFramework" Version="3.6.3" />
+    <PackageReference Include="NuGet.Frameworks" Version="6.12.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\FS2020Control\ControlContext.cs" Link="ControlContext.cs" />
-    <Compile Include="..\FS2020Control\FS2020Exception.cs" Link="FS2020Exception.cs" />
-    <Compile Include="..\FS2020Control\FSControl.cs" Link="FSControl.cs" />
-    <Compile Include="..\FS2020Control\XmlToSqlite.cs" Link="XmlToSqlite.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.101.0" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="7.1.0" />
-    <PackageReference Include="itext7" Version="7.2.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.5.0" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
+    <ProjectReference Include="..\FS2020Control\FS2020Control.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -11,21 +11,13 @@ using System.Linq;
 
 namespace FS2020Control
 {
-  internal class XmlToSqlite
-
+  public class XmlToSqlite(ControlContext? ct = null)
   {
-    public string? FS2020RootDir { get; private set; }
-    public string? FS2020ContainerDir { get; private set; }
+    public string? FS2020RootDir { get; private set; } = "";
+    public string? FS2020ContainerDir { get; private set; } = "";
     public string[] XmlFiles { get; private set; } = default!;
-    internal ControlContext? Context { get; } = default!;
+    public ControlContext? Context { get; } = ct;
     public bool IsSteam { get; set; }
-
-    public XmlToSqlite(ControlContext? ct = null)
-    {
-      Context = ct;
-      FS2020RootDir = "";
-      FS2020ContainerDir = "";
-    }
 
     public void CheckInstallations()
     {

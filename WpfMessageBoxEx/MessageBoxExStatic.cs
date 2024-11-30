@@ -274,9 +274,11 @@ namespace MsgBoxEx
 					Url            = data.URL.URL;
 					ShowUrl        = (Url == null) ? Visibility.Collapsed : Visibility.Visible;
 					UrlDisplayName = (Url == null) ? null : data.URL.DisplayName;
-					// make sure we actually set a color. If the color was not included, use the message text color
-					UrlForeground  = (data.URL.Foreground != null) ? new SolidColorBrush(data.URL.Foreground) : new SolidColorBrush(DefaultUrlForegroundColor);
-				}
+          // make sure we actually set a color. If the color was not included, use the message text color
+#pragma warning disable CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
+          UrlForeground  = (data.URL.Foreground != null) ? new SolidColorBrush(data.URL.Foreground) : new SolidColorBrush(DefaultUrlForegroundColor);
+#pragma warning restore CS8073 // The result of the expression is always the same since a value of this type is never equal to 'null'
+        }
 			}
 
 			title = (string.IsNullOrEmpty(title))?string.Empty:title.Trim();

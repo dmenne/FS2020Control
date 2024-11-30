@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net6.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Nullable>enable</Nullable>
     <PublishSingleFile>true</PublishSingleFile>
@@ -18,14 +18,16 @@
     <PackageIcon>fs2020.png</PackageIcon>
     <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <AssemblyVersion>1.3.0</AssemblyVersion>
-    <FileVersion></FileVersion>
+    <AssemblyVersion>1.2</AssemblyVersion>
+    <FileVersion>
+    </FileVersion>
     <ApplicationIcon>fs2020.ico</ApplicationIcon>
     <NeutralLanguage>en-US</NeutralLanguage>
+    <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <WarningLevel>7</WarningLevel>
-    <NoWarn>NU1701</NoWarn>
+    <NoWarn>NU1701;NU1903;NU1902</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <WarningLevel>7</WarningLevel>
@@ -39,13 +41,12 @@
     <Content Include="fs2020.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ClosedXML" Version="0.101.0" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="7.1.0" />
-    <PackageReference Include="itext7" Version="7.2.5" />
-    <PackageReference Include="Jot" Version="2.1.15" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.5" />
-    <PackageReference Include="System.Configuration.ConfigurationManager" Version="7.0.0" />
+    <PackageReference Include="ClosedXML" Version="0.104.2" />
+    <PackageReference Include="itext" Version="9.0.0" />
+    <PackageReference Include="Jot" Version="2.1.17" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WpfMessageBoxEx\WpfMessageBoxEx.csproj" />
