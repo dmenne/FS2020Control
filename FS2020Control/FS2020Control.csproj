@@ -45,7 +45,7 @@
     <PackageReference Include="itext" Version="9.0.0" />
     <PackageReference Include="Jot" Version="2.1.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="MSTest.Sdk" Version="3.6.3" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>

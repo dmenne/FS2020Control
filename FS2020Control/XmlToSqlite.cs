@@ -150,15 +150,15 @@ namespace FS2020Control
       return savedToDb;
     }
 
-    private string MakeValidXml(string path)
+    private static string MakeValidXml(string path)
     {
       string[] rawFile = File.ReadAllLines(path);
       if (!rawFile[1].Trim().StartsWith("<Version"))
-        throw new FS2020Exception("No <Version.. \n" + path);
+        throw new FS2020Exception($"No <Version.. \n{path}");
       // Replace <Version> 
       rawFile[1] = "<FS2020>"; // Dummy root element
-      // Append Closing (using "from end" operator)
-      rawFile[^1] = rawFile[^1] + "</FS2020>";
+      // Append Closing (using "from end" = ^ operator)
+      rawFile[^1] = $"{rawFile[^1]}</FS2020>";
       return String.Concat(rawFile);
     }
 
