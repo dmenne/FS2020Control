@@ -128,8 +128,10 @@ namespace FS2020Control
         return false;
       if (!IsSteam && path.Length < FS2020ContainerDir.Length + 32)
         return false;
-      string line = File.ReadLines(path).First();
-      return line.StartsWith("<?xml ");
+      var line = new byte[6];
+      using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+        fs.Read(line, 0, 6);
+      return Encoding.Default.GetString(line).StartsWith("<?xml");
     }
 
     public int ImportXmlFiles()
