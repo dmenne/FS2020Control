@@ -1,28 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0-windows10.0.17763.0</TargetFramework>
+    <TargetFramework>net8.0-windows10.0.17763.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>
-    <PlatformTarget>x64</PlatformTarget>
     <IsTestProject>true</IsTestProject>
-    <AssemblyVersion>1.2.1</AssemblyVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DefineConstants>$(DefineConstants);TEST</DefineConstants>
-    <NoWarn>NU1701;NU1702;NU1003;NU1902</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="SqliteTest.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MSTest.TestAdapter" Version="3.6.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.6.3" />
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="NUnit" Version="3.14.0" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,18 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Resources.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <Using Include="NUnit.Framework" />
   </ItemGroup>
 
 </Project>

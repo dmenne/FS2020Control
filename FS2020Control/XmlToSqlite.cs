@@ -146,7 +146,7 @@ namespace FS2020Control
       {
         savedToDb += ImportXmlFile(xmlFile);
       }
-      XmlFiles = xmlFiles.ToArray();
+      XmlFiles = [.. xmlFiles];
       return savedToDb;
     }
 

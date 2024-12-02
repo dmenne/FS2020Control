@@ -1,8 +1,7 @@
 ﻿using FS2020Control;
 
-namespace FS2020ControlTest
+namespace FS2020ControlNunitTest
 {
-  [TestClass]
   public class ControlContextTest
   {
     readonly FSControlFile sampleFile = new FSControlFile
@@ -35,7 +34,7 @@ namespace FS2020ControlTest
       SecondaryKeysCode = "25"
     };
 
-    [TestMethod]
+    [Test]
     public void DatabaseIsCreatedWhenItDoesNotExist()
     {
       using var ct = new ControlContext(test: true);
@@ -49,7 +48,7 @@ namespace FS2020ControlTest
       }
     }
 
-    [TestMethod]
+    [Test]
     public void CanSaveControlData()
     {
       using var ct = new ControlContext(test: true);
@@ -65,15 +64,18 @@ namespace FS2020ControlTest
         ct.Add(sampleFile);
         ct.SaveChanges();
 
-        Assert.AreEqual(ct.FSControlsFile.Count(), 1);
-        Assert.AreEqual(ct.FSControls.Count(), 2);
+        Assert.Multiple(() =>
+        {
+          Assert.That(ct.FSControlsFile.Count(), Is.EqualTo(1));
+          Assert.That(ct.FSControls.Count(), Is.EqualTo(2));
+        });
         ct.Remove(sampleControlAll);
         ct.SaveChanges();
-        Assert.AreEqual(ct.FSControls.Count(), 1);
+        Assert.That(ct.FSControls.Count(), Is.EqualTo(1));
         // Check cascade
         ct.Remove(sampleFile);
         ct.SaveChanges();
-        Assert.AreEqual(ct.FSControlsFile.Count(), 0);
+        Assert.That(ct.FSControlsFile.Count(), Is.EqualTo(0));
       }
     }
   }

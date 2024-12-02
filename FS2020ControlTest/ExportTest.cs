@@ -1,15 +1,14 @@
 using ClosedXML.Excel;
 
-namespace FS2020ControlTest
+namespace FS2020ControlNunitTest
 {
-  [TestClass]
   public class ExportTest
   {
     record Pastry(
       string Name, int Sales
     );
 
-    [TestMethod]
+    [Test]
     public void CanCreateExcelFile()
     {
       // https://closedxml.readthedocs.io/en/latest/features/tables.html#table-creation
@@ -26,7 +25,7 @@ namespace FS2020ControlTest
       ws.Range("D2:D5").CreateTable("Table");
       string outFile = Path.Combine(Path.GetTempPath(), "tables-create.xlsx");
       wb.SaveAs(outFile);
-      Assert.IsTrue(File.Exists(outFile));
+      Assert.That(File.Exists(outFile), Is.True);
       File.Delete(outFile);
     }
 
