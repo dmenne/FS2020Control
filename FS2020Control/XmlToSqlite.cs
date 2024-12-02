@@ -120,8 +120,11 @@ namespace FS2020Control
         return false;
       if (!IsSteam && path.Length < FS2020ContainerDir.Length + 32)
         return false;
-      string line = File.ReadLines(path).First();
-      return line.StartsWith("<?xml ");
+      var line = new byte[6];
+      // https://github.com/dmenne/FS2020Control/pull/4/files
+      using (var fs = new FileStream(path, FileMode.Open, FileAccess.Read))
+        fs.ReadExactly(line);
+      return Encoding.Default.GetString(line).StartsWith("<?xml");
     }
 
     public int ImportXmlFiles()
@@ -195,7 +198,7 @@ namespace FS2020Control
     public int ImportXmlFile(string filePath)
     {
       string friendlyName;     
-      XmlDocument doc = new XmlDocument();
+      XmlDocument doc = new();
       doc.LoadXml(MakeValidXml(filePath));
 
       XmlNode dNode = (doc.DocumentElement?.SelectSingleNode("/FS2020/Device")) ??
@@ -210,12 +213,12 @@ namespace FS2020Control
         throw new FS2020Exception("No ContextName found in " + filePath);
 
       List<FSControl> fsControls = new();      
-      foreach (XmlNode? cnode in cNodes)
+      foreach (XmlNode? currentNode in cNodes)
       {
-        if (cnode == null) continue;
-        string contextName = cnode.Attributes?["ContextName"]?.Value ?? "";
+        if (currentNode == null) continue;
+        string contextName = currentNode.Attributes?["ContextName"]?.Value ?? "";
         contextName = ToTitleCase(contextName) ?? "";
-        List<FSControl> fsControlsContext = SaveActions(filePath, cnode, contextName);
+        List<FSControl> fsControlsContext = SaveActions(filePath, currentNode, contextName);
         fsControls = fsControls.Concat(fsControlsContext).ToList();
       }
 
@@ -232,9 +235,9 @@ namespace FS2020Control
       return ret;
     }
 
-    private List<FSControl> SaveActions(string filePath, XmlNode cnode, string contextName)
+    private static List<FSControl> SaveActions(string filePath, XmlNode currentNode, string contextName)
     {
-      XmlNodeList nodes = (cnode.SelectNodes("Action")) ??
+      XmlNodeList nodes = (currentNode.SelectNodes("Action")) ??
         throw new FS2020Exception("No actions in " + filePath);
 
       var fsControls = new List<FSControl>();
@@ -261,8 +264,10 @@ namespace FS2020Control
         }
 
         // Copy to entity
-        FSControl ctl = new FSControl();
-        ctl.ActionName = actionName;
+        FSControl ctl = new()
+        {
+          ActionName = actionName
+        };
         string[] actionSplit = actionName.Split('_');
         ctl.Actor = ToTitleCase(actionSplit[0]);
         if (actionName.Length > 1)

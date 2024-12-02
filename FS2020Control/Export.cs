@@ -18,18 +18,13 @@ using iText.Kernel.Pdf.Event;
 
 namespace FS2020Control
 {
-  internal class TopEventHandler : IEventHandler
+  internal class TopEventHandler(string title) : AbstractPdfDocumentEventHandler
   {
-    private readonly string title;
+    private readonly string title = title;
 
-    public TopEventHandler(string title)
+    public virtual void OnEvent(AbstractPdfDocumentEvent evt)
     {
-      this.title = title;
-    }
-
-    public virtual void OnEvent(IEvent evt)
-    {
-      PdfDocumentEvent docEvent = (PdfDocumentEvent)evt;
+      PdfDocumentEvent docEvent = evt as PdfDocumentEvent;
       PdfDocument pdfDoc = docEvent.GetDocument();
       PdfPage page = docEvent.GetPage();
       int pageNumber = pdfDoc.GetPageNumber(page);
@@ -50,6 +45,12 @@ namespace FS2020Control
           VerticalAlignment.BOTTOM,
           angle);
       pdfCanvas.Release();
+    }
+
+    protected override void OnAcceptedEvent(AbstractPdfDocumentEvent @event)
+    {
+      Console.WriteLine("OnAcceptedEvent");
+      //throw new NotImplementedException();
     }
   }
 
@@ -127,7 +128,7 @@ namespace FS2020Control
         PdfWriter writer = new(outFile);
         PdfDocument pdf = new(writer);
         string title = $"{device} {friendlyName}";
-// *****        pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new TopEventHandler(title));
+        pdf.AddEventHandler(PdfDocumentEvent.END_PAGE, new TopEventHandler(title));
         document = new(pdf);
       }
       catch (IOException)

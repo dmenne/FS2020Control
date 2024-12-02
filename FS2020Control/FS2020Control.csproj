@@ -43,6 +43,7 @@
   <ItemGroup>
     <PackageReference Include="ClosedXML" Version="0.104.2" />
     <PackageReference Include="itext" Version="9.0.0" />
+    <PackageReference Include="itext.bouncy-castle-fips-adapter" Version="9.0.0" />
     <PackageReference Include="Jot" Version="2.1.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
     <PackageReference Include="MSTest.Sdk" Version="3.6.3" />
