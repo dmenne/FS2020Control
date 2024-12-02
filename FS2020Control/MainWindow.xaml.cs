@@ -10,7 +10,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using MsgBoxEx;
 using System.Windows.Media;
 
 
@@ -33,7 +32,7 @@ namespace FS2020Control
 
     private bool FromDatabase { get; set; }
     // https://learn.microsoft.com/en-us/dotnet/desktop/wpf/controls/how-to-sort-a-gridview-column-when-a-header-is-clicked
-    GridViewColumnHeader lastHeaderClicked = null;
+    GridViewColumnHeader? lastHeaderClicked = null;
     ListSortDirection lastDirection = ListSortDirection.Ascending;
 #if TEST_RELOAD && DEBUG
     int checkFilesCount = 0;
@@ -42,24 +41,21 @@ namespace FS2020Control
     public MainWindow()
     {
       InitializeComponent();
-#pragma warning disable CS8601 // Possible null reference assignment.
       fsControlFileViewSource =
-        FindResource(nameof(fsControlFileViewSource)) as CollectionViewSource;
+        (FindResource(nameof(fsControlFileViewSource)) as CollectionViewSource)!;
       fsControlViewSource =
-        FindResource(nameof(fsControlViewSource)) as CollectionViewSource;
-#pragma warning restore CS8601 // Possible null reference assignment.
+        (FindResource(nameof(fsControlViewSource)) as CollectionViewSource)!;
       var tracker = Services.Tracker;
       tracker.Track(this);
       tracker.Track(HideDebugCheck);
       var assembly = System.Reflection.Assembly.GetExecutingAssembly()?
         .GetName()?.Version?.ToString();
-      Title = "FS2020 Controls - " + assembly;
+      Title = $"FS2020 Controls - {assembly}";
     }
 
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
       const int checkFilesSeconds = 2;
-      MessageBoxEx.SetFont("Arial", 15.0);
       LoadData();
       
       CheckFilesTimer.Tick += new EventHandler(CheckFilesTimer_Tick!);
@@ -130,7 +126,7 @@ namespace FS2020Control
       catch (FS2020Exception ex)
       {
         // https://www.codeproject.com/Articles/5290638/Customizable-WPF-MessageBox
-        MessageBoxEx.Show(ex.Message, "FS2020 Controls");
+        MessageBox.Show(ex.Message, "FS2020 Controls");
       }
       lastSettingsLabel =  FromDatabase ? "From Database" : (
         xh.IsSteam ? "From Steam" : "From Store");
@@ -151,8 +147,7 @@ namespace FS2020Control
 
     private void CollectionViewSource_Filter(object sender, FilterEventArgs e)
     {
-      FSControl? fsc = e.Item as FSControl;
-      if (fsc == null) return;
+      if (e.Item is not FSControl fsc) return;
       bool hc = HideDebugCheck.IsChecked ?? false;
       if (hc)
       {
@@ -205,8 +200,8 @@ namespace FS2020Control
       SelectedControlsBox.SelectedItems.Clear(); // Must be first
       SelectedControlsBox.Items.Clear();
       var da = DistinctActors();
-      foreach (string v in da)
-        SelectedControlsBox.Items.Add(v);
+      foreach (string? v in da)
+        if (v != null) SelectedControlsBox.Items.Add(v);
     }
 
     private List<string?> DistinctActors()
@@ -214,19 +209,17 @@ namespace FS2020Control
       var cgItems =
        CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource);
       if (cgItems == null)
-        return new List<string?>();
-      IEnumerable<FSControl> cg = cgItems
-        .OfType<FSControl>();
+        return [];
+      IEnumerable<FSControl> cg = cgItems.OfType<FSControl>();
       bool hc = HideDebugCheck.IsChecked ?? false;
       if (hc)
         cg = cg
           .Where(x => x.Actor != "Debug");
       return
-        cg
+        [.. cg
         .Select(x => x.Actor)
         .Distinct()
-        .OrderBy(x => x)
-        .ToList();
+        .OrderBy(x => x)];
     }
 
     private void UpdateSelectedContextBox()
@@ -243,7 +236,7 @@ namespace FS2020Control
       var cgItems =
        CollectionViewSource.GetDefaultView(FSControlGrid.ItemsSource);
       if (cgItems == null)
-        return new List<string>();
+        return [];
       IEnumerable<FSControl> cg = cgItems
         .OfType<FSControl>();
       bool hc = HideDebugCheck.IsChecked ?? false;
@@ -252,11 +245,10 @@ namespace FS2020Control
           // TODO: or has debug
           .Where(x => x.ContextName != "Debug");
       return
-        cg
+        [.. cg
         .Select(x => x.ContextName)
         .Distinct()
-        .OrderBy(x => x)
-        .ToList();
+        .OrderBy(x => x)];
     }
 
     private void HideDebugCheck_Click(object sender, RoutedEventArgs e)
@@ -281,14 +273,14 @@ namespace FS2020Control
       if (FSControlFileGrid.SelectedItem is not FSControlFile ct) return;
       if (!System.IO.File.Exists(ct.FileName))
       {
-        MessageBoxEx.Show("This file was deleted by FS2020; press reload to synchronize");
+        MessageBox.Show("This file was deleted by FS2020; press reload to synchronize");
         return;
 
       }
 
 
-      // Once MessageBoxRes is not null, it will not be show of later calls
-      MessageBoxRes ??= MessageBoxEx.Show(
+      // Once MessageBoxRes is not null, it will not be shown at later calls
+      MessageBoxRes ??= MessageBox.Show(
           "When you select <Yes>, the file will be opened with Notepad.\n" +
           "When you select <No>, the full path to the settings will be copied to the clipboard.\n\n" +
           "Any changes to the file are at your own risk.\n" +
@@ -307,8 +299,8 @@ namespace FS2020Control
           break;
         case MessageBoxResult.No:
           Clipboard.SetText(ct.FileName);
-          MessageBoxEx.Show($"Copied to clipboard:\n{ct.FileName}", "FS2020Control",
-            MessageBoxImage.Information);
+          MessageBox.Show($"Copied to clipboard:\n{ct.FileName}", "FS2020Control",
+             MessageBoxButton.OK, MessageBoxImage.Information );
           break;
       }
 
@@ -349,10 +341,9 @@ namespace FS2020Control
     void FSControlFile_GridViewColumnHeaderClick(object sender,
                                                RoutedEventArgs e)
     {
-      GridViewColumnHeader? headerClicked = e.OriginalSource as GridViewColumnHeader;
       ListSortDirection direction;
 
-      if (headerClicked == null) return;
+      if (e.OriginalSource is not GridViewColumnHeader headerClicked) return;
       if (headerClicked.Role == GridViewColumnHeaderRole.Padding) return;
       if (headerClicked != lastHeaderClicked)
       {
@@ -408,9 +399,9 @@ namespace FS2020Control
       dataView.Refresh();
     }
 
-    public class WaitCursor : IDisposable
+    public partial class WaitCursor : IDisposable
     {
-      private Cursor _previousCursor;
+      private readonly Cursor _previousCursor;
 
       public WaitCursor()
       {
@@ -423,6 +414,7 @@ namespace FS2020Control
 
       public void Dispose()
       {
+        GC.SuppressFinalize(this);
         Mouse.OverrideCursor = _previousCursor;
       }
 

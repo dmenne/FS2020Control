@@ -49,9 +49,6 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WpfMessageBoxEx\WpfMessageBoxEx.csproj" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="fs2020.png">
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
