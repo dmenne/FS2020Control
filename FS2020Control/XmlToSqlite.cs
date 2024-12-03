@@ -89,12 +89,15 @@ namespace FS2020Control
       {
         return;
       }
+      int useInstallation = 0;  
       if (rootDir.Count > 1)
       {
-        throw new FS2020Exception(
-          "Multiple Flight Simulator Directories found; don't know which one you want");
+        // TODO: this is a temporary workaround
+        var integerInput = new IntegerInput(rootDir.Count);
+        integerInput.ShowDialog();
+        useInstallation = integerInput.number;
       }
-      FS2020RootDir = Path.Combine(rootDir[0], "SystemAppData", "wgs");
+      FS2020RootDir = Path.Combine(rootDir[useInstallation], "SystemAppData", "wgs");
       if (!Directory.Exists(FS2020RootDir))
         return;
       List<string> containerDir = Directory.GetDirectories(FS2020RootDir)

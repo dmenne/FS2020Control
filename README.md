@@ -1,10 +1,10 @@
-# FS2020Control: Export Control Settings in Microsoft FS2020 to SQLite, Excel and Pdf
+# FS2020Control: Export Control Settings in Microsoft FS2020 (FS2024?) to SQLite, Excel and Pdf
 
 [![stability-release-candidate](https://img.shields.io/badge/stability-pre--release-48c9b0.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#release-candidate)
 
 [dieter.menne\@menne-biomed.de](mailto:dieter.menne@menne-biomed.de)
 
-Thanks to @pmb2019 for testing on the Steam platform.
+This release contains a temporary workaround for users who got the message "Multiple settings directories found; don't know which one you want" when installing FS2024. Since I have no FS2024 yet, I cannot test this, but you can now choose which installation you want. You have to do this every time you start the game. When I can test it here, I will make the settings persistent in a future revision. When I can test it here, I will make the settings persistent in a future revision. With only one installation, the app should start with no questions asked.
 
 Getting an overview of the assigned keys for keyboard, mouse, flight stick in Microsoft 
 Flight Simulator 2020 is not easy. For the installations from the Microsoft Store, 
@@ -52,8 +52,7 @@ Releases are on [flightsim.to](https://flightsim.to/d/dmenne/fs2020-control).
 
 ## Steam
 
-Steam installations are tricky, and I had to rely on @pmb2019 for debugging. If someone has both Store and 
-Steam installation, or swapped one for the other, nasty things might happen. Please report to github.
+Steam installations are tricky, and I had to rely on @pmb2019 for debugging. If someone has both Store and  Steam installation, or swapped one for the other, nasty things might happen. Please report to github.
 
 ## Main Window
 
@@ -94,8 +93,9 @@ Example file name:
 ## Advanced 
 
 When you double-click an item in the upper left data grid, you can select to open the file 
-with the control settings with Notepad, or copy the gargantuan file name to the clipboard 
-for processing in other editors. 
+with the associated application for XML on your computer, or with Notepad by default. I recommend  installing Notepad++ for XML files because it has a nice color coding.
+
+Alternatively, you can copy the gargantuan file _name_ to the clipboard for processing in other editors. 
 
 
 ![After a double click, you can decide if you want to open the file or copy the path to the clipboard. 

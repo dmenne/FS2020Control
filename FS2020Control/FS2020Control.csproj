@@ -34,10 +34,6 @@
     <NoWarn>NU1701</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="fs2020.png" />
-    <None Remove="release.ps1" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="fs2020.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -46,8 +42,6 @@
     <PackageReference Include="itext.bouncy-castle-fips-adapter" Version="9.0.0" />
     <PackageReference Include="Jot" Version="2.1.17" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.0" />
-    <PackageReference Include="MSTest.Sdk" Version="3.6.3" />
-    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="fs2020.png">
@@ -71,5 +65,8 @@
       <Pack>True</Pack>
       <PackagePath>\</PackagePath>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Themes\" />
   </ItemGroup>
 </Project>

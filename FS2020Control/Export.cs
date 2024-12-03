@@ -24,8 +24,9 @@ namespace FS2020Control
 
     public virtual void OnEvent(AbstractPdfDocumentEvent evt)
     {
-      PdfDocumentEvent docEvent = evt as PdfDocumentEvent;
-      PdfDocument pdfDoc = docEvent.GetDocument();
+      if (evt is not PdfDocumentEvent docEvent) return;
+      PdfDocument? pdfDoc = docEvent.GetDocument();
+      if (pdfDoc == null) return; 
       PdfPage page = docEvent.GetPage();
       int pageNumber = pdfDoc.GetPageNumber(page);
       Rectangle pageSize = page.GetPageSize();
@@ -116,9 +117,9 @@ namespace FS2020Control
         int gray = 240, int fontSize = 12, int padding = 5)
     {
       string[] showColumns =
-        { "ContextName", "Actor", "FriendlyAction", "PrimaryKeys", "SecondaryKeys" };
+        ["ContextName", "Actor", "FriendlyAction", "PrimaryKeys", "SecondaryKeys"];
       string[] showColumnLabels =
-        { "Context", "Actor", "Action", "Primary", "Secondary" };
+        ["Context", "Actor", "Action", "Primary", "Secondary"];
 
       if (it.Count == 0) return "";
       iLayout.Document document;
