@@ -1,6 +1,6 @@
 # FS2020Control: Export Control Settings in Microsoft FS2020 (FS2024?) to SQLite, Excel and Pdf
 
-[![stability-release-candidate](https://img.shields.io/badge/stability-pre--release-48c9b0.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#release-candidate)
+[![stability-mature](https://img.shields.io/badge/stability-mature-008000.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#mature)
 
 [dieter.menne\@menne-biomed.de](mailto:dieter.menne@menne-biomed.de)
 
